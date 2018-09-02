@@ -20,17 +20,8 @@ public enum TokenType {
     case eof
 }
 
-extension TokenType: Equatable {
-    public static func ==(lhs: TokenType, rhs: TokenType) -> Bool {
-        switch (lhs, rhs) {
-        case (.rightParen, .rightParen): return true
-        case (.leftParen, .leftParen): return true
-        case (.space(let left), .space(let right)): return left == right
-        case (.eof, .eof): return true
-        default: return false
-        }
-    }
-}
+protocol AutoEquatable {}
+extension TokenType: AutoEquatable {}
 
 public struct Token {
     let type: TokenType
