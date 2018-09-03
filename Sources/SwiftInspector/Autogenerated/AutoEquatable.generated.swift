@@ -38,10 +38,6 @@ public func == (lhs: TokenType, rhs: TokenType) -> Bool {
         return true
     case (.rightBrace, .rightBrace):
         return true
-    case (.leftBracket, .leftBracket):
-        return true
-    case (.rightBracket, .rightBracket):
-        return true
     case (.dot, .dot):
         return true
     case (.comma, .comma):

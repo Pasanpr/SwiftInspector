@@ -78,4 +78,30 @@ class TokenTests: XCTestCase {
         let lexer = Lexer(source: input)
         XCTAssertEqual(try! lexer.scan(), output)
     }
+    
+    func testBraces() {
+        let input = "{}"
+        let output: [Token] = [
+            Token(type: .leftBrace, line: 1),
+            Token(type: .rightBrace, line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
+    func testPunctuation() {
+        let input = ".,:;"
+        let output: [Token] = [
+            Token(type: .dot, line: 1),
+            Token(type: .comma, line: 1),
+            Token(type: .colon, line: 1),
+            Token(type: .semicolon, line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
 }

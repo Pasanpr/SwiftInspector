@@ -44,6 +44,12 @@ public final class Lexer {
         switch character {
         case "(": return Token(type: .leftParen, line: line)
         case ")": return Token(type: .rightParen, line: line)
+        case "{": return Token(type: .leftBrace, line: line)
+        case "}": return Token(type: .rightBrace, line: line)
+        case ".": return Token(type: .dot, line: line)
+        case ",": return Token(type: .comma, line: line)
+        case ":": return Token(type: .colon, line: line)
+        case ";": return Token(type: .semicolon, line: line)
         case " ":
             // After the character is consumed by advance(), current is incremented. We started at current - 1
             let startPosition = current - 1

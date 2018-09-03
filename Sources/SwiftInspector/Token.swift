@@ -13,9 +13,16 @@ public enum TokenType {
     // Punctuation
     case leftParen, rightParen
     case leftBrace, rightBrace
-    case leftBracket, rightBracket
     case dot, comma, colon, semicolon
     case space(String)
+    
+    // Operator
+    
+    // Identifier
+    
+    // Literal
+    
+    // Keyword
     
     case eof
 }
