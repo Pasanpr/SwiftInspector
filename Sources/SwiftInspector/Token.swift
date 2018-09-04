@@ -10,11 +10,14 @@ import Foundation
 // https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/LexicalStructure.html
 
 public enum TokenType {
+    case newline
     // Punctuation
     case leftParen, rightParen
     case leftBrace, rightBrace
     case dot, comma, colon, semicolon
-    case space(String)
+    case whitespace(String)
+    case comment(String)
+    case slash
     
     // Operator
     

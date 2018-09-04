@@ -24,7 +24,7 @@ class TokenTests: XCTestCase {
     func testSingleSpace() {
         let input = " "
         let output: [Token] = [
-            Token(type: .space(" "), line: 1),
+            Token(type: .whitespace(" "), line: 1),
             Token(type: .eof, line: 1)
         ]
         
@@ -35,7 +35,7 @@ class TokenTests: XCTestCase {
     func testMultipleSpace() {
         let input = "  "
         let output: [Token] = [
-            Token(type: .space("  "), line: 1),
+            Token(type: .whitespace("  "), line: 1),
             Token(type: .eof, line: 1)
         ]
         
@@ -70,7 +70,7 @@ class TokenTests: XCTestCase {
         let input = "(  )"
         let output: [Token] = [
             Token(type: .leftParen, line: 1),
-            Token(type: .space("  "), line: 1),
+            Token(type: .whitespace("  "), line: 1),
             Token(type: .rightParen, line: 1),
             Token(type: .eof, line: 1)
         ]
@@ -99,6 +99,32 @@ class TokenTests: XCTestCase {
             Token(type: .colon, line: 1),
             Token(type: .semicolon, line: 1),
             Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
+    func testSlash() {
+        let input = "/"
+        let output: [Token] = [
+            Token(type: .slash, line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
+    func testComment() {
+        let input = "{} // This is a comment\n"
+        let output: [Token] = [
+            Token(type: .leftBrace, line: 1),
+            Token(type: .rightBrace, line: 1),
+            Token(type: .whitespace(" "), line: 1),
+            Token(type: .comment("// This is a comment"), line: 1),
+            Token(type: .newline, line: 1),
+            Token(type: .eof, line: 2)
         ]
         
         let lexer = Lexer(source: input)

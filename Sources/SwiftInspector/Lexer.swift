@@ -42,6 +42,9 @@ public final class Lexer {
     private func tokenize() throws -> Token {
         let character = advance()
         switch character {
+        case "\n":
+            self.line += 1
+            return Token(type: .newline, line: line - 1)
         case "(": return Token(type: .leftParen, line: line)
         case ")": return Token(type: .rightParen, line: line)
         case "{": return Token(type: .leftBrace, line: line)
@@ -50,6 +53,17 @@ public final class Lexer {
         case ",": return Token(type: .comma, line: line)
         case ":": return Token(type: .colon, line: line)
         case ";": return Token(type: .semicolon, line: line)
+        case "/":
+            if match(expected: "/") {
+                while (peek() != "\n" && !isAtEnd) {
+                    let _ = advance()
+                }
+                
+                let substring = substringInSource(from: start, to: current - 1)
+                return Token(type: .comment(substring), line: line)
+            } else {
+                return Token(type: .slash, line: line)
+            }
         case " ":
             // After the character is consumed by advance(), current is incremented. We started at current - 1
             let startPosition = current - 1
@@ -61,10 +75,10 @@ public final class Lexer {
             let stopIndex = source.unicodeScalars.index(source.unicodeScalars.startIndex, offsetBy: current)
             
             if startIndex == stopIndex {
-                return Token(type: .space(" "), line: line)
+                return Token(type: .whitespace(" "), line: line)
             } else {
                 let substring = String(source.unicodeScalars[startIndex..<stopIndex])
-                return Token(type: .space(substring), line: line)
+                return Token(type: .whitespace(substring), line: line)
             }
         default:
             throw LexerError.invalidToken
@@ -88,7 +102,7 @@ public final class Lexer {
     }
     
     
-    /// Returns true if expected scalar matches scalar at current position
+    /// Returns true if expected scalar matches scalar at next position
     ///
     /// Functions as a conditional advance. Moves current forward only if match
     /// - Parameter expected: Unicode scalar to match
@@ -113,6 +127,12 @@ public final class Lexer {
     public func character(in source: String, atIndexOffsetBy offset: Int) -> UnicodeScalar {
         let index = source.unicodeScalars.index(source.unicodeScalars.startIndex, offsetBy: offset)
         return source.unicodeScalars[index]
+    }
+    
+    public func substringInSource(from start: Int, to end: Int) -> String {
+        let startIndex = source.index(source.startIndex, offsetBy: start)
+        let endIndex = source.index(source.startIndex, offsetBy: end)
+        return String(source[startIndex...endIndex])
     }
 }
 

@@ -30,6 +30,8 @@ fileprivate func compareArrays<T>(lhs: [T], rhs: [T], compare: (_ lhs: T, _ rhs:
 extension TokenType: Equatable {}
 public func == (lhs: TokenType, rhs: TokenType) -> Bool {
     switch (lhs, rhs) {
+    case (.newline, .newline):
+        return true
     case (.leftParen, .leftParen):
         return true
     case (.rightParen, .rightParen):
@@ -46,8 +48,12 @@ public func == (lhs: TokenType, rhs: TokenType) -> Bool {
         return true
     case (.semicolon, .semicolon):
         return true
-    case (.space(let lhs), .space(let rhs)):
+    case (.whitespace(let lhs), .whitespace(let rhs)):
         return lhs == rhs
+    case (.comment(let lhs), .comment(let rhs)):
+        return lhs == rhs
+    case (.slash, .slash):
+        return true
     case (.eof, .eof):
         return true
     default: return false
