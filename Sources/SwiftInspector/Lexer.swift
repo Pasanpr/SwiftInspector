@@ -44,15 +44,15 @@ public final class Lexer {
         switch character {
         case "\n":
             self.line += 1
-            return Token(type: .newline, line: line - 1)
-        case "(": return Token(type: .leftParen, line: line)
-        case ")": return Token(type: .rightParen, line: line)
-        case "{": return Token(type: .leftBrace, line: line)
-        case "}": return Token(type: .rightBrace, line: line)
-        case ".": return Token(type: .dot, line: line)
-        case ",": return Token(type: .comma, line: line)
-        case ":": return Token(type: .colon, line: line)
-        case ";": return Token(type: .semicolon, line: line)
+            return Token(type: .whitespace(.lineBreak(.newline)), line: line - 1)
+        case "(": return Token(type: .punctuation(.leftParen), line: line)
+        case ")": return Token(type: .punctuation(.rightParen), line: line)
+        case "{": return Token(type: .punctuation(.leftCurlyBracket), line: line)
+        case "}": return Token(type: .punctuation(.rightCurlyBracket), line: line)
+        case ".": return Token(type: .punctuation(.dot), line: line)
+        case ",": return Token(type: .punctuation(.comma), line: line)
+        case ":": return Token(type: .punctuation(.colon), line: line)
+        case ";": return Token(type: .punctuation(.semicolon), line: line)
         case "/":
             if match(expected: "/") {
                 while (peek() != "\n" && !isAtEnd) {
@@ -60,26 +60,15 @@ public final class Lexer {
                 }
                 
                 let substring = substringInSource(from: start, to: current - 1)
-                return Token(type: .comment(substring), line: line)
+                return Token(type: .whitespace(.comment(substring)), line: line)
             } else {
                 return Token(type: .slash, line: line)
             }
         case " ":
-            // After the character is consumed by advance(), current is incremented. We started at current - 1
-            let startPosition = current - 1
-            
             while (peek() == " " && !isAtEnd) {
                 let _ = advance()
             }
-            let startIndex = source.unicodeScalars.index(source.unicodeScalars.startIndex, offsetBy: startPosition)
-            let stopIndex = source.unicodeScalars.index(source.unicodeScalars.startIndex, offsetBy: current)
-            
-            if startIndex == stopIndex {
-                return Token(type: .whitespace(" "), line: line)
-            } else {
-                let substring = String(source.unicodeScalars[startIndex..<stopIndex])
-                return Token(type: .whitespace(substring), line: line)
-            }
+            return Token(type: .whitespace(.whitespaceItem(.space)), line: line)
         default:
             throw LexerError.invalidToken
         }

@@ -24,7 +24,7 @@ class TokenTests: XCTestCase {
     func testSingleSpace() {
         let input = " "
         let output: [Token] = [
-            Token(type: .whitespace(" "), line: 1),
+            Token(type: .whitespace(.whitespaceItem(.space)), line: 1),
             Token(type: .eof, line: 1)
         ]
         
@@ -35,7 +35,7 @@ class TokenTests: XCTestCase {
     func testMultipleSpace() {
         let input = "  "
         let output: [Token] = [
-            Token(type: .whitespace("  "), line: 1),
+            Token(type: .whitespace(.whitespaceItem(.space)), line: 1),
             Token(type: .eof, line: 1)
         ]
         
@@ -46,7 +46,7 @@ class TokenTests: XCTestCase {
     func testSingleParen() {
         let input = "("
         let output: [Token] = [
-            Token(type: .leftParen, line: 1),
+            Token(type: .punctuation(.leftParen), line: 1),
             Token(type: .eof, line: 1)
         ]
         
@@ -57,8 +57,8 @@ class TokenTests: XCTestCase {
     func testMultipleParens() {
         let input = "()"
         let output: [Token] = [
-            Token(type: .leftParen, line: 1),
-            Token(type: .rightParen, line: 1),
+            Token(type: .punctuation(.leftParen), line: 1),
+            Token(type: .punctuation(.rightParen), line: 1),
             Token(type: .eof, line: 1)
         ]
         
@@ -69,9 +69,9 @@ class TokenTests: XCTestCase {
     func testParensWithMultipleSpaces() {
         let input = "(  )"
         let output: [Token] = [
-            Token(type: .leftParen, line: 1),
-            Token(type: .whitespace("  "), line: 1),
-            Token(type: .rightParen, line: 1),
+            Token(type: .punctuation(.leftParen), line: 1),
+            Token(type: .whitespace(.whitespaceItem(.space)), line: 1),
+            Token(type: .punctuation(.rightParen), line: 1),
             Token(type: .eof, line: 1)
         ]
         
@@ -82,8 +82,8 @@ class TokenTests: XCTestCase {
     func testBraces() {
         let input = "{}"
         let output: [Token] = [
-            Token(type: .leftBrace, line: 1),
-            Token(type: .rightBrace, line: 1),
+            Token(type: .punctuation(.leftCurlyBracket), line: 1),
+            Token(type: .punctuation(.rightCurlyBracket), line: 1),
             Token(type: .eof, line: 1)
         ]
         
@@ -94,10 +94,10 @@ class TokenTests: XCTestCase {
     func testPunctuation() {
         let input = ".,:;"
         let output: [Token] = [
-            Token(type: .dot, line: 1),
-            Token(type: .comma, line: 1),
-            Token(type: .colon, line: 1),
-            Token(type: .semicolon, line: 1),
+            Token(type: .punctuation(.dot), line: 1),
+            Token(type: .punctuation(.comma), line: 1),
+            Token(type: .punctuation(.colon), line: 1),
+            Token(type: .punctuation(.semicolon), line: 1),
             Token(type: .eof, line: 1)
         ]
         
@@ -119,11 +119,11 @@ class TokenTests: XCTestCase {
     func testComment() {
         let input = "{} // This is a comment\n"
         let output: [Token] = [
-            Token(type: .leftBrace, line: 1),
-            Token(type: .rightBrace, line: 1),
-            Token(type: .whitespace(" "), line: 1),
-            Token(type: .comment("// This is a comment"), line: 1),
-            Token(type: .newline, line: 1),
+            Token(type: .punctuation(.leftCurlyBracket), line: 1),
+            Token(type: .punctuation(.rightCurlyBracket), line: 1),
+            Token(type: .whitespace(.whitespaceItem(.space)), line: 1),
+            Token(type: .whitespace(.comment("// This is a comment")), line: 1),
+            Token(type: .whitespace(.lineBreak(.newline)), line: 1),
             Token(type: .eof, line: 2)
         ]
         
