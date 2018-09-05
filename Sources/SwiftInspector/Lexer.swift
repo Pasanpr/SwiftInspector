@@ -59,8 +59,19 @@ public final class Lexer {
                     let _ = advance()
                 }
                 
-                let substring = substringInSource(from: start, to: current - 1)
+                let substring = substringInSource(from: start, to: current)
                 return Token(type: .whitespace(.comment(substring)), line: line)
+            } else if match(expected: "*") {
+                while (peek() != "*" && peekNext() != "/" && !isAtEnd) {
+                    let _ = advance()
+                }
+                
+                // At loop end current points to the last character before the trailing comment marker.
+                // Move it forward to the end of the marker
+                let _ = advance(by: 2)
+                
+                let substring = substringInSource(from: start, to: current)
+                return Token(type: .whitespace(.multiLineComment(substring)), line: line)
             } else {
                 return Token(type: .slash, line: line)
             }
@@ -85,9 +96,23 @@ public final class Lexer {
         return c
     }
     
+    public func advance(by i: Int) -> UnicodeScalar {
+        let c = character(in: source, atIndexOffsetBy: current)
+        current += i
+        return c
+    }
+    
     private func peek() -> UnicodeScalar {
+        return peek(forwardBy: current)
+    }
+    
+    private func peekNext() -> UnicodeScalar {
+        return peek(forwardBy: current + 1)
+    }
+    
+    private func peek(forwardBy i: Int) -> UnicodeScalar {
         if isAtEnd { return "\0" }
-        return character(in: source, atIndexOffsetBy: current)
+        return character(in: source, atIndexOffsetBy: i)
     }
     
     
@@ -121,7 +146,7 @@ public final class Lexer {
     public func substringInSource(from start: Int, to end: Int) -> String {
         let startIndex = source.index(source.startIndex, offsetBy: start)
         let endIndex = source.index(source.startIndex, offsetBy: end)
-        return String(source[startIndex...endIndex])
+        return String(source[startIndex..<endIndex])
     }
 }
 

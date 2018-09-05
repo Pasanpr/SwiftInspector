@@ -116,15 +116,25 @@ class TokenTests: XCTestCase {
         XCTAssertEqual(try! lexer.scan(), output)
     }
     
-    func testComment() {
-        let input = "{} // This is a comment\n"
+    func testSingleLineComment() {
+        let input = "// This is a comment\n"
+        
         let output: [Token] = [
-            Token(type: .punctuation(.leftCurlyBracket), line: 1),
-            Token(type: .punctuation(.rightCurlyBracket), line: 1),
-            Token(type: .whitespace(.whitespaceItem(.space)), line: 1),
             Token(type: .whitespace(.comment("// This is a comment")), line: 1),
             Token(type: .whitespace(.lineBreak(.newline)), line: 1),
             Token(type: .eof, line: 2)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
+    func testMultiLineComment() {
+        let input = "/* This is a multi line comment.\n\nThat spans a single line.*/"
+        
+        let output: [Token] = [
+            Token(type: .whitespace(.multiLineComment("/* This is a multi line comment.\n\nThat spans a single line.*/")), line: 1),
+            Token(type: .eof, line: 1)
         ]
         
         let lexer = Lexer(source: input)
