@@ -26,6 +26,57 @@ fileprivate func compareArrays<T>(lhs: [T], rhs: [T], compare: (_ lhs: T, _ rhs:
 // MARK: - AutoEquatable for classes, protocols, structs
 
 // MARK: - AutoEquatable for Enums
+// MARK: - Declarations AutoEquatable
+extension Declarations: Equatable {}
+public func == (lhs: Declarations, rhs: Declarations) -> Bool {
+    switch (lhs, rhs) {
+    case (.`associatedtype`, .`associatedtype`):
+        return true
+    case (.`class`, .`class`):
+        return true
+    case (.`deinit`, .`deinit`):
+        return true
+    case (.`enum`, .`enum`):
+        return true
+    case (.`extension`, .`extension`):
+        return true
+    case (.`fileprivate`, .`fileprivate`):
+        return true
+    case (.`func`, .`func`):
+        return true
+    case (.`import`, .`import`):
+        return true
+    case (.`init`, .`init`):
+        return true
+    case (.`inout`, .`inout`):
+        return true
+    case (.`internal`, .`internal`):
+        return true
+    case (.`let`, .`let`):
+        return true
+    case (.`open`, .`open`):
+        return true
+    case (.`operator`, .`operator`):
+        return true
+    case (.`private`, .`private`):
+        return true
+    case (.`protocol`, .`protocol`):
+        return true
+    case (.`public`, .`public`):
+        return true
+    case (.`static`, .`static`):
+        return true
+    case (.`struct`, .`struct`):
+        return true
+    case (.`subscript`, .`subscript`):
+        return true
+    case (.`typealias`, .`typealias`):
+        return true
+    case (.`var`, .`var`):
+        return true
+    default: return false
+    }
+}
 // MARK: - LineBreak AutoEquatable
 extension LineBreak: Equatable {}
 public func == (lhs: LineBreak, rhs: LineBreak) -> Bool {

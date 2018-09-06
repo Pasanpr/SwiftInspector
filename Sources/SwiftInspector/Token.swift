@@ -42,6 +42,31 @@ public enum Punctuation: String,  AutoEquatable {
     case semicolon = "\u{003B}"
 }
 
+public enum Declarations: String, AutoEquatable, CaseIterable {
+    case `associatedtype`
+    case `class`
+    case `deinit`
+    case `enum`
+    case `extension`
+    case `fileprivate`
+    case `func`
+    case `import`
+    case `init`
+    case `inout`
+    case `internal`
+    case `let`
+    case `open`
+    case `operator`
+    case `private`
+    case `protocol`
+    case `public`
+    case `static`
+    case `struct`
+    case `subscript`
+    case `typealias`
+    case `var`
+}
+
 public enum TokenType {
     case whitespace(Whitespace)
     case punctuation(Punctuation)
