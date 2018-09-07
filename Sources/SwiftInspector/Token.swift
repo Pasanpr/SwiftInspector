@@ -9,26 +9,6 @@ import Foundation
 
 // https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/LexicalStructure.html
 
-public enum LineBreak: String, AutoEquatable {
-    case carriageReturn = "\u{000D}"
-    case newline = "\u{000A}"
-}
-
-public enum WhitespaceItem: String, AutoEquatable {
-    case null = "\u{0000}"
-    case horizontalTab = "\u{0009}"
-    case verticalTab = "\u{000B}"
-    case formFeed = "\u{000C}"
-    case space = "\u{0020}"
-}
-
-public enum Whitespace: AutoEquatable {
-    case whitespaceItem(WhitespaceItem)
-    case lineBreak(LineBreak)
-    case comment(String)
-    case multiLineComment(String)
-}
-
 public enum Punctuation: String,  AutoEquatable {
     case leftParen = "\u{0028}"
     case rightParen = "\u{0029}"
@@ -59,7 +39,6 @@ public enum TokenType {
     case eof
 }
 
-protocol AutoEquatable {}
 extension TokenType: AutoEquatable {}
 
 public struct Token {

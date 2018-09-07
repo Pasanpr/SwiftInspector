@@ -164,4 +164,28 @@ class TokenTests: XCTestCase {
         let lexer = Lexer(source: input)
         XCTAssertEqual(try! lexer.scan(), output)
     }
+    
+    func testStatement() {
+        let input = "nil"
+        
+        let output: [Token] = [
+            Token(type: .keyword(.statement(.nil)), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
+    func testNumberSignKeyword() {
+        let input = "#colorLiteral"
+        
+        let output: [Token] = [
+            Token(type: .keyword(.pound(.colorLiteral)), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
 }

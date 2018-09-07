@@ -82,16 +82,20 @@ public final class Lexer {
             
             return Token(type: .whitespace(.whitespaceItem(.space)), line: line)
         default:
-            if isAlpha(character) {
+            if isKeyword(character) {
                 while (!isAtEnd && !isWhitespace(peek())) {
                     let _ = advance()
                 }
                 
                 let lexeme = substringInSource(from: start, to: current)
-                if let declaration = Declaration(rawValue: lexeme) {
+                if let declaration = Keyword.Declaration(rawValue: lexeme) {
                     return Token(type: .keyword(.declaration(declaration)), line: line)
-                } else if let expression = Expression(rawValue: lexeme) {
+                } else if let expression = Keyword.Expression(rawValue: lexeme) {
                     return Token(type: .keyword(.expression(expression)), line: line)
+                } else if let statement = Keyword.Statement(rawValue: lexeme) {
+                   return Token(type: .keyword(.statement(statement)), line: line)
+                } else if let pound = Keyword.Pound(rawValue: lexeme) {
+                    return Token(type: .keyword(.pound(pound)), line: line)
                 } else {
                     fatalError()
                 }
@@ -165,9 +169,11 @@ public final class Lexer {
         return String(source[startIndex..<endIndex])
     }
     
-    public func isAlpha(_ c: UnicodeScalar) -> Bool {
-        let set = CharacterSet.uppercaseLetters.union(.lowercaseLetters)
-        return set.contains(c)
+    public func isKeyword(_ c: UnicodeScalar) -> Bool {
+        let letters = CharacterSet.uppercaseLetters.union(.lowercaseLetters)
+        let underscoreSet = CharacterSet(charactersIn: "#")
+        let combinedSet = letters.union(underscoreSet)
+        return combinedSet.contains(c)
     }
     
     public func isWhitespace(_ c: UnicodeScalar) -> Bool {

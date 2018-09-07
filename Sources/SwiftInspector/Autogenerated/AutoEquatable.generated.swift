@@ -26,9 +26,26 @@ fileprivate func compareArrays<T>(lhs: [T], rhs: [T], compare: (_ lhs: T, _ rhs:
 // MARK: - AutoEquatable for classes, protocols, structs
 
 // MARK: - AutoEquatable for Enums
-// MARK: - Declaration AutoEquatable
-extension Declaration: Equatable {}
-public func == (lhs: Declaration, rhs: Declaration) -> Bool {
+// MARK: - Keyword AutoEquatable
+extension Keyword: Equatable {}
+public func == (lhs: Keyword, rhs: Keyword) -> Bool {
+    switch (lhs, rhs) {
+    case (.declaration(let lhs), .declaration(let rhs)):
+        return lhs == rhs
+    case (.expression(let lhs), .expression(let rhs)):
+        return lhs == rhs
+    case (.statement(let lhs), .statement(let rhs)):
+        return lhs == rhs
+    case (.pound(let lhs), .pound(let rhs)):
+        return lhs == rhs
+    case (.pattern, .pattern):
+        return true
+    default: return false
+    }
+}
+// MARK: - Keyword.Declaration AutoEquatable
+extension Keyword.Declaration: Equatable {}
+public func == (lhs: Keyword.Declaration, rhs: Keyword.Declaration) -> Bool {
     switch (lhs, rhs) {
     case (.`associatedtype`, .`associatedtype`):
         return true
@@ -77,9 +94,9 @@ public func == (lhs: Declaration, rhs: Declaration) -> Bool {
     default: return false
     }
 }
-// MARK: - Expression AutoEquatable
-extension Expression: Equatable {}
-public func == (lhs: Expression, rhs: Expression) -> Bool {
+// MARK: - Keyword.Expression AutoEquatable
+extension Keyword.Expression: Equatable {}
+public func == (lhs: Keyword.Expression, rhs: Keyword.Expression) -> Bool {
     switch (lhs, rhs) {
     case (.`break`, .`break`):
         return true
@@ -118,24 +135,76 @@ public func == (lhs: Expression, rhs: Expression) -> Bool {
     default: return false
     }
 }
-// MARK: - Keyword AutoEquatable
-extension Keyword: Equatable {}
-public func == (lhs: Keyword, rhs: Keyword) -> Bool {
+// MARK: - Keyword.Pound AutoEquatable
+extension Keyword.Pound: Equatable {}
+public func == (lhs: Keyword.Pound, rhs: Keyword.Pound) -> Bool {
     switch (lhs, rhs) {
-    case (.declaration(let lhs), .declaration(let rhs)):
-        return lhs == rhs
-    case (.expression(let lhs), .expression(let rhs)):
-        return lhs == rhs
+    case (.available, .available):
+        return true
+    case (.colorLiteral, .colorLiteral):
+        return true
+    case (.column, .column):
+        return true
+    case (.`else`, .`else`):
+        return true
+    case (.elseif, .elseif):
+        return true
+    case (.endif, .endif):
+        return true
+    case (.error, .error):
+        return true
+    case (.file, .file):
+        return true
+    case (.fileLiteral, .fileLiteral):
+        return true
+    case (.function, .function):
+        return true
+    case (.`if`, .`if`):
+        return true
+    case (.imageLiteral, .imageLiteral):
+        return true
+    case (.line, .line):
+        return true
+    case (.selector, .selector):
+        return true
+    case (.sourceLocation, .sourceLocation):
+        return true
+    case (.warning, .warning):
+        return true
     default: return false
     }
 }
-// MARK: - LineBreak AutoEquatable
-extension LineBreak: Equatable {}
-public func == (lhs: LineBreak, rhs: LineBreak) -> Bool {
+// MARK: - Keyword.Statement AutoEquatable
+extension Keyword.Statement: Equatable {}
+public func == (lhs: Keyword.Statement, rhs: Keyword.Statement) -> Bool {
     switch (lhs, rhs) {
-    case (.carriageReturn, .carriageReturn):
+    case (.`as`, .`as`):
         return true
-    case (.newline, .newline):
+    case (.`Any`, .`Any`):
+        return true
+    case (.`catch`, .`catch`):
+        return true
+    case (.`false`, .`false`):
+        return true
+    case (.`is`, .`is`):
+        return true
+    case (.`nil`, .`nil`):
+        return true
+    case (.`rethrows`, .`rethrows`):
+        return true
+    case (.`super`, .`super`):
+        return true
+    case (.`self`, .`self`):
+        return true
+    case (.`Self`, .`Self`):
+        return true
+    case (.`throw`, .`throw`):
+        return true
+    case (.`throws`, .`throws`):
+        return true
+    case (.`true`, .`true`):
+        return true
+    case (.`try`, .`try`):
         return true
     default: return false
     }
@@ -199,9 +268,20 @@ public func == (lhs: Whitespace, rhs: Whitespace) -> Bool {
     default: return false
     }
 }
-// MARK: - WhitespaceItem AutoEquatable
-extension WhitespaceItem: Equatable {}
-public func == (lhs: WhitespaceItem, rhs: WhitespaceItem) -> Bool {
+// MARK: - Whitespace.LineBreak AutoEquatable
+extension Whitespace.LineBreak: Equatable {}
+public func == (lhs: Whitespace.LineBreak, rhs: Whitespace.LineBreak) -> Bool {
+    switch (lhs, rhs) {
+    case (.carriageReturn, .carriageReturn):
+        return true
+    case (.newline, .newline):
+        return true
+    default: return false
+    }
+}
+// MARK: - Whitespace.WhitespaceItem AutoEquatable
+extension Whitespace.WhitespaceItem: Equatable {}
+public func == (lhs: Whitespace.WhitespaceItem, rhs: Whitespace.WhitespaceItem) -> Bool {
     switch (lhs, rhs) {
     case (.null, .null):
         return true
