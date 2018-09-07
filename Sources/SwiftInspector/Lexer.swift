@@ -79,9 +79,25 @@ public final class Lexer {
             while (peek() == " " && !isAtEnd) {
                 let _ = advance()
             }
+            
             return Token(type: .whitespace(.whitespaceItem(.space)), line: line)
         default:
-            throw LexerError.invalidToken
+            if isAlpha(character) {
+                while (!isAtEnd && !isWhitespace(peek())) {
+                    let _ = advance()
+                }
+                
+                let lexeme = substringInSource(from: start, to: current)
+                if let declaration = Declaration(rawValue: lexeme) {
+                    return Token(type: .keyword(.declaration(declaration)), line: line)
+                } else if let expression = Expression(rawValue: lexeme) {
+                    return Token(type: .keyword(.expression(expression)), line: line)
+                } else {
+                    fatalError()
+                }
+            } else {
+                throw LexerError.invalidToken
+            }
         }
     }
     
@@ -147,6 +163,16 @@ public final class Lexer {
         let startIndex = source.index(source.startIndex, offsetBy: start)
         let endIndex = source.index(source.startIndex, offsetBy: end)
         return String(source[startIndex..<endIndex])
+    }
+    
+    public func isAlpha(_ c: UnicodeScalar) -> Bool {
+        let set = CharacterSet.uppercaseLetters.union(.lowercaseLetters)
+        return set.contains(c)
+    }
+    
+    public func isWhitespace(_ c: UnicodeScalar) -> Bool {
+        let set = CharacterSet.whitespacesAndNewlines
+        return set.contains(c)
     }
 }
 

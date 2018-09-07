@@ -26,9 +26,9 @@ fileprivate func compareArrays<T>(lhs: [T], rhs: [T], compare: (_ lhs: T, _ rhs:
 // MARK: - AutoEquatable for classes, protocols, structs
 
 // MARK: - AutoEquatable for Enums
-// MARK: - Declarations AutoEquatable
-extension Declarations: Equatable {}
-public func == (lhs: Declarations, rhs: Declarations) -> Bool {
+// MARK: - Declaration AutoEquatable
+extension Declaration: Equatable {}
+public func == (lhs: Declaration, rhs: Declaration) -> Bool {
     switch (lhs, rhs) {
     case (.`associatedtype`, .`associatedtype`):
         return true
@@ -77,6 +77,58 @@ public func == (lhs: Declarations, rhs: Declarations) -> Bool {
     default: return false
     }
 }
+// MARK: - Expression AutoEquatable
+extension Expression: Equatable {}
+public func == (lhs: Expression, rhs: Expression) -> Bool {
+    switch (lhs, rhs) {
+    case (.`break`, .`break`):
+        return true
+    case (.`case`, .`case`):
+        return true
+    case (.`continue`, .`continue`):
+        return true
+    case (.`default`, .`default`):
+        return true
+    case (.`defer`, .`defer`):
+        return true
+    case (.`do`, .`do`):
+        return true
+    case (.`else`, .`else`):
+        return true
+    case (.`fallthrough`, .`fallthrough`):
+        return true
+    case (.`for`, .`for`):
+        return true
+    case (.`guard`, .`guard`):
+        return true
+    case (.`if`, .`if`):
+        return true
+    case (.`in`, .`in`):
+        return true
+    case (.`repeat`, .`repeat`):
+        return true
+    case (.`return`, .`return`):
+        return true
+    case (.`switch`, .`switch`):
+        return true
+    case (.`where`, .`where`):
+        return true
+    case (.`while`, .`while`):
+        return true
+    default: return false
+    }
+}
+// MARK: - Keyword AutoEquatable
+extension Keyword: Equatable {}
+public func == (lhs: Keyword, rhs: Keyword) -> Bool {
+    switch (lhs, rhs) {
+    case (.declaration(let lhs), .declaration(let rhs)):
+        return lhs == rhs
+    case (.expression(let lhs), .expression(let rhs)):
+        return lhs == rhs
+    default: return false
+    }
+}
 // MARK: - LineBreak AutoEquatable
 extension LineBreak: Equatable {}
 public func == (lhs: LineBreak, rhs: LineBreak) -> Bool {
@@ -122,6 +174,8 @@ public func == (lhs: TokenType, rhs: TokenType) -> Bool {
     case (.whitespace(let lhs), .whitespace(let rhs)):
         return lhs == rhs
     case (.punctuation(let lhs), .punctuation(let rhs)):
+        return lhs == rhs
+    case (.keyword(let lhs), .keyword(let rhs)):
         return lhs == rhs
     case (.slash, .slash):
         return true

@@ -140,4 +140,28 @@ class TokenTests: XCTestCase {
         let lexer = Lexer(source: input)
         XCTAssertEqual(try! lexer.scan(), output)
     }
+    
+    func testDeclaration() {
+        let input = "var"
+        
+        let output: [Token] = [
+            Token(type: .keyword(.declaration(.var)), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
+    func testExpression() {
+        let input = "for"
+        
+        let output: [Token] = [
+            Token(type: .keyword(.expression(.for)), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
 }
