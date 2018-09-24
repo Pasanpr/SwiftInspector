@@ -34,8 +34,6 @@ public enum TokenType {
     
     // Literal
     
-    // Keyword
-    
     case eof
 }
 
