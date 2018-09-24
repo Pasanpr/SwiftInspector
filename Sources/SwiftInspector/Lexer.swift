@@ -49,7 +49,20 @@ public final class Lexer {
         case ")": return Token(type: .punctuation(.rightParen), line: line)
         case "{": return Token(type: .punctuation(.leftCurlyBracket), line: line)
         case "}": return Token(type: .punctuation(.rightCurlyBracket), line: line)
-        case ".": return Token(type: .punctuation(.dot), line: line)
+        case ".":
+            if peek() == "." {
+                while peek() == "." && !isAtEnd {
+                    let _ = advance()
+                }
+                
+                if match(expected: "<") {
+                    return Token(type: .operator(.halfOpenRange), line: line)
+                } else {
+                    return Token(type: .operator(.closedRange), line: line)
+                }
+            } else {
+                return Token(type: .punctuation(.dot), line: line)
+            }
         case ",": return Token(type: .punctuation(.comma), line: line)
         case ":": return Token(type: .punctuation(.colon), line: line)
         case ";": return Token(type: .punctuation(.semicolon), line: line)
@@ -73,7 +86,7 @@ public final class Lexer {
                 let substring = substringInSource(from: start, to: current)
                 return Token(type: .whitespace(.multiLineComment(substring)), line: line)
             } else {
-                return Token(type: .slash, line: line)
+                return Token(type: .operator(.division), line: line)
             }
         case " ":
             while (peek() == " " && !isAtEnd) {
@@ -81,6 +94,80 @@ public final class Lexer {
             }
             
             return Token(type: .whitespace(.whitespaceItem(.space)), line: line)
+        case "=":
+            while (peek() == "=" && !isAtEnd) {
+                let _ = advance()
+            }
+            
+            let substring = substringInSource(from: start, to: current)
+            
+            switch substring {
+            case "=": return Token(type: .operator(.assignment), line: line)
+            case "==": return Token(type: .operator(.equalTo), line: line)
+            case "===": return Token(type: .operator(.identity), line: line)
+            default:
+                throw LexerError.invalidToken
+            }
+        case "+":
+            if match(expected: "=") {
+                return Token(type: .operator(.additionAssignment), line: line)
+            } else {
+                return Token(type: .operator(.addition), line: line)
+            }
+        case "-":
+            if match(expected: "=") {
+                return Token(type: .operator(.subtractionAssignment), line: line)
+            } else {
+                return Token(type: .operator(.subtraction), line: line)
+            }
+        case "*": return Token(type: .operator(.multiplication), line: line)
+        case "%": return Token(type: .operator(.remainder), line: line)
+        case "!":
+            if match(expected: "=") {
+                while (peek() == "=" && !isAtEnd) {
+                    let _ = advance()
+                }
+                
+                let substring = substringInSource(from: start, to: current)
+                
+                switch substring {
+                case "!=": return Token(type: .operator(.notEqualTo), line: line)
+                case "!==": return Token(type: .operator(.identityNot), line: line)
+                default: throw LexerError.invalidToken
+                }
+            } else {
+                fatalError()
+            }
+        case "<":
+            if match(expected: "=") {
+                return Token(type: .operator(.lessThanOrEqual), line: line)
+            } else {
+                return Token(type: .operator(.lessThan), line: line)
+            }
+        case ">":
+            if match(expected: "=") {
+                return Token(type: .operator(.greaterThanOrEqual), line: line)
+            } else {
+                return Token(type: .operator(.greaterThan), line: line)
+            }
+        case "?":
+            if match(expected: "?") {
+                return Token(type: .operator(.nilCoalescing), line: line)
+            } else {
+                fatalError()
+            }
+        case "&":
+            if match(expected: "&") {
+                return Token(type: .operator(.logicalAnd), line: line)
+            } else {
+                fatalError()
+            }
+        case "|":
+            if match(expected: "|") {
+                return Token(type: .operator(.logicalOr), line: line)
+            } else {
+                fatalError()
+            }
         default:
             if isKeyword(character) {
                 while (!isAtEnd && !isWhitespace(peek())) {
@@ -98,6 +185,12 @@ public final class Lexer {
                     return Token(type: .keyword(.pound(pound)), line: line)
                 } else {
                     fatalError()
+                }
+            } else if isDigit(character) {
+                if let numericalLiteralToken = numericalLiteral() {
+                    return numericalLiteralToken
+                } else {
+                    throw LexerError.invalidToken
                 }
             } else {
                 throw LexerError.invalidToken
@@ -179,6 +272,37 @@ public final class Lexer {
     public func isWhitespace(_ c: UnicodeScalar) -> Bool {
         let set = CharacterSet.whitespacesAndNewlines
         return set.contains(c)
+    }
+    
+    public func isDigit(_ c: UnicodeScalar) -> Bool {
+        let integerNumberCharacterSet = CharacterSet(charactersIn: Unicode.Scalar("0")...Unicode.Scalar("9"))
+        return integerNumberCharacterSet.contains(c)
+    }
+    
+    public func numericalLiteral() -> Token? {
+        while isDigit(peek()) { let _ = advance() }
+        
+        // Look for fractional part
+        if peek() == "." && isDigit(peekNext()) {
+            // Consume the decimal
+            let _ = advance()
+            
+            while isDigit(peek()) { let _ = advance() }
+            
+            let lexeme = substringInSource(from: start, to: current)
+            guard let floatingPointValue = Double(lexeme) else {
+                return nil
+            }
+            
+            return Token(type: .literal(.floatingPoint(floatingPointValue)), line: line)
+        } else {
+            let lexeme = substringInSource(from: start, to: current)
+            guard let integerValue = Int(lexeme) else {
+                return nil
+            }
+            
+            return Token(type: .literal(.integer(integerValue)), line: line)
+        }
     }
 }
 

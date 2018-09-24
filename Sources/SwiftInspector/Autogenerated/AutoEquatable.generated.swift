@@ -209,6 +209,80 @@ public func == (lhs: Keyword.Statement, rhs: Keyword.Statement) -> Bool {
     default: return false
     }
 }
+// MARK: - Literal AutoEquatable
+extension Literal: Equatable {}
+public func == (lhs: Literal, rhs: Literal) -> Bool {
+    switch (lhs, rhs) {
+    case (.integer(let lhs), .integer(let rhs)):
+        return lhs == rhs
+    case (.floatingPoint(let lhs), .floatingPoint(let rhs)):
+        return lhs == rhs
+    case (.string(let lhs), .string(let rhs)):
+        return lhs == rhs
+    case (.boolean(let lhs), .boolean(let rhs)):
+        return lhs == rhs
+    default: return false
+    }
+}
+// MARK: - Operator AutoEquatable
+extension Operator: Equatable {}
+public func == (lhs: Operator, rhs: Operator) -> Bool {
+    switch (lhs, rhs) {
+    case (.assignment, .assignment):
+        return true
+    case (.addition, .addition):
+        return true
+    case (.subtraction, .subtraction):
+        return true
+    case (.multiplication, .multiplication):
+        return true
+    case (.division, .division):
+        return true
+    case (.remainder, .remainder):
+        return true
+    case (.additionAssignment, .additionAssignment):
+        return true
+    case (.subtractionAssignment, .subtractionAssignment):
+        return true
+    case (.prefixMinus, .prefixMinus):
+        return true
+    case (.prefixPlus, .prefixPlus):
+        return true
+    case (.equalTo, .equalTo):
+        return true
+    case (.notEqualTo, .notEqualTo):
+        return true
+    case (.greaterThan, .greaterThan):
+        return true
+    case (.lessThan, .lessThan):
+        return true
+    case (.greaterThanOrEqual, .greaterThanOrEqual):
+        return true
+    case (.lessThanOrEqual, .lessThanOrEqual):
+        return true
+    case (.identity, .identity):
+        return true
+    case (.identityNot, .identityNot):
+        return true
+    case (.nilCoalescing, .nilCoalescing):
+        return true
+    case (.ternaryConditional, .ternaryConditional):
+        return true
+    case (.closedRange, .closedRange):
+        return true
+    case (.halfOpenRange, .halfOpenRange):
+        return true
+    case (.oneSidedRange, .oneSidedRange):
+        return true
+    case (.logicalNot, .logicalNot):
+        return true
+    case (.logicalAnd, .logicalAnd):
+        return true
+    case (.logicalOr, .logicalOr):
+        return true
+    default: return false
+    }
+}
 // MARK: - Punctuation AutoEquatable
 extension Punctuation: Equatable {}
 public func == (lhs: Punctuation, rhs: Punctuation) -> Bool {
@@ -217,13 +291,13 @@ public func == (lhs: Punctuation, rhs: Punctuation) -> Bool {
         return true
     case (.rightParen, .rightParen):
         return true
-    case (.leftSquareBracket, .leftSquareBracket):
-        return true
-    case (.rightSquareBracket, .rightSquareBracket):
-        return true
     case (.leftCurlyBracket, .leftCurlyBracket):
         return true
     case (.rightCurlyBracket, .rightCurlyBracket):
+        return true
+    case (.leftSquareBracket, .leftSquareBracket):
+        return true
+    case (.rightSquareBracket, .rightSquareBracket):
         return true
     case (.dot, .dot):
         return true
@@ -246,8 +320,10 @@ public func == (lhs: TokenType, rhs: TokenType) -> Bool {
         return lhs == rhs
     case (.keyword(let lhs), .keyword(let rhs)):
         return lhs == rhs
-    case (.slash, .slash):
-        return true
+    case (.`operator`(let lhs), .`operator`(let rhs)):
+        return lhs == rhs
+    case (.literal(let lhs), .literal(let rhs)):
+        return lhs == rhs
     case (.eof, .eof):
         return true
     default: return false

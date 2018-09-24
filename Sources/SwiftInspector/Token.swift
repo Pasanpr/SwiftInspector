@@ -22,17 +22,25 @@ public enum Punctuation: String,  AutoEquatable {
     case semicolon = "\u{003B}"
 }
 
+public enum Literal: AutoEquatable {
+    case integer(Int)
+    case floatingPoint(Double)
+    case string(String)
+    case boolean(Bool)
+}
+
 public enum TokenType {
     case whitespace(Whitespace)
     case punctuation(Punctuation)
     case keyword(Keyword)
-    case slash // FIXME
     
     // Operator
+    case `operator`(Operator)
     
     // Identifier
     
     // Literal
+    case literal(Literal)
     
     case eof
 }
