@@ -184,8 +184,6 @@ public func == (lhs: Keyword.Statement, rhs: Keyword.Statement) -> Bool {
         return true
     case (.`catch`, .`catch`):
         return true
-    case (.`false`, .`false`):
-        return true
     case (.`is`, .`is`):
         return true
     case (.`nil`, .`nil`):
@@ -201,8 +199,6 @@ public func == (lhs: Keyword.Statement, rhs: Keyword.Statement) -> Bool {
     case (.`throw`, .`throw`):
         return true
     case (.`throws`, .`throws`):
-        return true
-    case (.`true`, .`true`):
         return true
     case (.`try`, .`try`):
         return true

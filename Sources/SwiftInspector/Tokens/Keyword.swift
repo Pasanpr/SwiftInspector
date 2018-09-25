@@ -55,7 +55,6 @@ public enum Keyword: AutoEquatable {
         case `as`
         case `Any`
         case `catch`
-        case `false`
         case `is`
         case `nil`
         case `rethrows`
@@ -64,7 +63,6 @@ public enum Keyword: AutoEquatable {
         case `Self`
         case `throw`
         case `throws`
-        case `true`
         case `try`
     }
     

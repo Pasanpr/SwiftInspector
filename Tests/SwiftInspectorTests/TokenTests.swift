@@ -429,6 +429,20 @@ class TokenTests: XCTestCase {
         XCTAssertEqual(try! lexer.scan(), output)
     }
     
+    func testBooleanLiteral() {
+        let input = "true false"
+        
+        let output = [
+            Token(type: .literal(.boolean(true)), line: 1),
+            Token(type: .whitespace(.whitespaceItem(.space)), line: 1),
+            Token(type: .literal(.boolean(false)), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
     func testIntegerLiteral() {
         let input = "123"
         

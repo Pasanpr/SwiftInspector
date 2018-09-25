@@ -186,6 +186,8 @@ public final class Lexer {
                    return Token(type: .keyword(.statement(statement)), line: line)
                 } else if let pound = Keyword.Pound(rawValue: lexeme) {
                     return Token(type: .keyword(.pound(pound)), line: line)
+                } else if let booleanLiteralToken = booleanLiteral(withLexeme: lexeme) {
+                    return booleanLiteralToken
                 } else {
                     fatalError()
                 }
@@ -332,6 +334,14 @@ public final class Lexer {
             let _ = advance()
             let substring = substringInSource(from: start + 1, to: current - 1)
             return Token(type: .literal(.string(substring)), line: line)
+        }
+    }
+    
+    public func booleanLiteral(withLexeme lexeme: String) -> Token? {
+        switch lexeme {
+        case "true": return Token(type: .literal(.boolean(true)), line: line)
+        case "false": return Token(type: .literal(.boolean(false)), line: line)
+        default: return nil
         }
     }
 }
