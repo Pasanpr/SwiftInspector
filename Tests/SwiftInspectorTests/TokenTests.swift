@@ -413,13 +413,11 @@ class TokenTests: XCTestCase {
         XCTAssertEqual(try! lexer.scan(), output)
     }
     
-    func testInterpolatedStringLiteralInsideSingleLineStringLiteral() {
-        let input = "\"This is a string \\(3) after the interpolation\""
+    func testMultilineStringLiteral() {
+        let input = "\"\"\"This is a multiline string literal\"\"\""
         
         let output = [
-            Token(type: .literal(.string("This is a string ")), line: 1),
-            Token(type: .literal(.interpolatedString("3")), line: 1),
-            Token(type: .literal(.string(" after the interpolation")), line: 1),
+            Token(type: .literal(.string("This is a multiline string literal")), line: 1),
             Token(type: .eof, line: 1)
         ]
         
@@ -427,11 +425,47 @@ class TokenTests: XCTestCase {
         XCTAssertEqual(try! lexer.scan(), output)
     }
     
-    func testMultilineStringLiteral() {
-        let input = "\"\"\"This is a multiline string literal\"\"\""
+    func testInterpolatedStringLiteralInsideSingleLineStringLiteral() {
+        let input = "\"This is a string \\(3) after the interpolation\""
+        
+        let firstLiteral = Literal.string("This is a string ")
+        let secondLiteral = Literal.string("3")
+        let thirdLiteral = Literal.string(" after the interpolation")
+
+        let output = [
+            Token(type: .literal(.interpolatedString([firstLiteral, secondLiteral, thirdLiteral])), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
+    func testStringInterpolatedStringLiteralInsideSingleLineStringLiteral() {
+        let input = "\"This is a string \\(\"3\") after the interpolation\""
+        
+        let firstLiteral = Literal.string("This is a string ")
+        let secondLiteral = Literal.string("3")
+        let thirdLiteral = Literal.string(" after the interpolation")
         
         let output = [
-            Token(type: .literal(.string("This is a multiline string literal")), line: 1),
+            Token(type: .literal(.interpolatedString([firstLiteral, secondLiteral, thirdLiteral])), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
+    func testInterpolatedLiteralInsideMultilineStringLiteral() {
+        let input = "\"\"\"This is a multiline string literal \\(3) with more string literals\"\"\""
+        
+        let firstLiteral = Literal.string("This is a multiline string literal ")
+        let secondLiteral = Literal.string("3")
+        let thirdLiteral = Literal.string(" with more string literals")
+        
+        let output = [
+            Token(type: .literal(.interpolatedString([firstLiteral, secondLiteral, thirdLiteral])), line: 1),
             Token(type: .eof, line: 1)
         ]
         

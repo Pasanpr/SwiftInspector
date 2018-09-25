@@ -26,7 +26,7 @@ public enum Literal: AutoEquatable {
     case integer(Int)
     case floatingPoint(Double)
     case string(String)
-    case interpolatedString(String)
+    indirect case interpolatedString([Literal])
     case boolean(Bool)
 }
 
