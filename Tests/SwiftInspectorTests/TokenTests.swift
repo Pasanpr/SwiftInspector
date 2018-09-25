@@ -401,6 +401,34 @@ class TokenTests: XCTestCase {
         XCTAssertEqual(try! lexer.scan(), output)
     }
     
+    func testStringLiteral() {
+        let input = "\"This is a string\""
+        
+        let output = [
+            Token(type: .literal(.string("This is a string")), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
+    func testInterpolatedStringLiteral() {
+        
+    }
+    
+    func testMultilineStringLiteral() {
+        let input = "\"\"\"This is a multiline string literal\"\"\""
+        
+        let output = [
+            Token(type: .literal(.string("This is a multiline string literal")), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
     func testIntegerLiteral() {
         let input = "123"
         

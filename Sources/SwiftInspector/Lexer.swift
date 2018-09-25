@@ -168,6 +168,8 @@ public final class Lexer {
             } else {
                 fatalError()
             }
+        case "\"":
+            return stringLiteral()
         default:
             if isKeyword(character) {
                 while (!isAtEnd && !isWhitespace(peek())) {
@@ -175,6 +177,7 @@ public final class Lexer {
                 }
                 
                 let lexeme = substringInSource(from: start, to: current)
+                
                 if let declaration = Keyword.Declaration(rawValue: lexeme) {
                     return Token(type: .keyword(.declaration(declaration)), line: line)
                 } else if let expression = Keyword.Expression(rawValue: lexeme) {
@@ -216,14 +219,14 @@ public final class Lexer {
     }
     
     private func peek() -> UnicodeScalar {
-        return peek(forwardBy: current)
+        return peek(aheadBy: current)
     }
     
     private func peekNext() -> UnicodeScalar {
-        return peek(forwardBy: current + 1)
+        return peek(aheadBy: current + 1)
     }
     
-    private func peek(forwardBy i: Int) -> UnicodeScalar {
+    private func peek(aheadBy i: Int) -> UnicodeScalar {
         if isAtEnd { return "\0" }
         return character(in: source, atIndexOffsetBy: i)
     }
@@ -302,6 +305,33 @@ public final class Lexer {
             }
             
             return Token(type: .literal(.integer(integerValue)), line: line)
+        }
+    }
+    
+    public func stringLiteral() -> Token {
+        // Multi-line string literals
+        if peek() == "\"" && peekNext() == "\"" {
+            let _ = advance(by: 2)
+            
+            while peek() != "\"" && peekNext() != "\""  && peek(aheadBy: 3) != "\"" && !isAtEnd {
+                let _ = advance()
+            }
+            
+            // Consume the final character & ending quotations
+            let _ = advance(by: 4)
+            
+            let substring = substringInSource(from: start + 3, to: current - 3)
+            return Token(type: .literal(.string(substring)), line: line)
+        } else {
+            while peek() != "\"" && !isAtEnd {
+                if peek() == "\n" { line += 1 }
+                let _ = advance()
+            }
+            
+            // Consume the closing double quote
+            let _ = advance()
+            let substring = substringInSource(from: start + 1, to: current - 1)
+            return Token(type: .literal(.string(substring)), line: line)
         }
     }
 }
