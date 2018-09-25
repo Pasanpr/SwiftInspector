@@ -215,6 +215,8 @@ public func == (lhs: Literal, rhs: Literal) -> Bool {
         return lhs == rhs
     case (.string(let lhs), .string(let rhs)):
         return lhs == rhs
+    case (.interpolatedString(let lhs), .interpolatedString(let rhs)):
+        return lhs == rhs
     case (.boolean(let lhs), .boolean(let rhs)):
         return lhs == rhs
     default: return false

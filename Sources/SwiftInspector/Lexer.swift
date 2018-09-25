@@ -170,6 +170,12 @@ public final class Lexer {
             }
         case "\"":
             return stringLiteral()
+        case "\\":
+            if match(expected: "(") {
+                return interpolatedStringLiteral()
+            } else {
+                throw LexerError.invalidToken
+            }
         default:
             if isKeyword(character) {
                 while (!isAtEnd && !isWhitespace(peek())) {
@@ -325,9 +331,15 @@ public final class Lexer {
             let substring = substringInSource(from: start + 3, to: current - 3)
             return Token(type: .literal(.string(substring)), line: line)
         } else {
-            while peek() != "\"" && !isAtEnd {
+
+            while peek() != "\"" && peek() != "\\" && !isAtEnd {
                 if peek() == "\n" { line += 1 }
                 let _ = advance()
+            }
+            
+            if peek() == "\\"  && peekNext() == "(" {
+                let substring = substringInSource(from: start + 1, to: current)
+                return Token(type: .literal(.string(substring)), line: line)
             }
             
             // Consume the closing double quote
@@ -336,6 +348,19 @@ public final class Lexer {
             return Token(type: .literal(.string(substring)), line: line)
         }
     }
+    
+    public func interpolatedStringLiteral() -> Token {
+        while (peek() != ")" && !isAtEnd) {
+            let _ = advance()
+        }
+        
+        // Consume interpolation end parentheses
+        let _ = advance()
+        let substring = substringInSource(from: start + 2, to: current-1)
+        
+        return Token(type: .literal(.interpolatedString(substring)), line: line)
+    }
+    
     
     public func booleanLiteral(withLexeme lexeme: String) -> Token? {
         switch lexeme {
