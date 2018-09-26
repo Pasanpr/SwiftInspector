@@ -511,11 +511,41 @@ class TokenTests: XCTestCase {
         XCTAssertEqual(try! lexer.scan(), output)
     }
     
-    func testIdentifier() {
+    func testBasicIdentifier() {
         let input = "foo"
         
         let output = [
             Token(type: .identifier("foo"), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
+    func testReservedKeywordAsIdentifier() {
+        let input = "`operator`"
+        
+        let output = [
+            Token(type: .identifier("operator"), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
+    func testAssignmentExpression() {
+        let input = "let name = \"Swift\""
+        
+        let output = [
+            Token(type: .keyword(.declaration(.let)), line: 1),
+            Token(type: .whitespace(.whitespaceItem(.space)), line: 1),
+            Token(type: .identifier("name"), line: 1),
+            Token(type: .whitespace(.whitespaceItem(.space)), line: 1),
+            Token(type: .operator(.assignment), line: 1),
+            Token(type: .whitespace(.whitespaceItem(.space)), line: 1),
+            Token(type: .literal(.string("Swift")), line: 1),
             Token(type: .eof, line: 1)
         ]
         

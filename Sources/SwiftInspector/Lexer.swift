@@ -185,6 +185,16 @@ public final class Lexer {
             } else {
                 fatalError()
             }
+        case "`":
+            while (!isAtEnd && peek() != "`") {
+                let _ = advance()
+            }
+            
+            let lexeme = substringInSource(from: start + 1, to: current)
+            
+            // Consume closing backtick
+            let _ = advance()
+            return Token(type: .identifier(lexeme), line: line)
         default:
             if isIdentifierHead(character) {
                 while (!isAtEnd && !isWhitespace(peek())) {
@@ -202,6 +212,15 @@ public final class Lexer {
                 } else if let booleanLiteralToken = booleanLiteral(withLexeme: lexeme) {
                     return booleanLiteralToken
                 } else {
+                    let firstIndex = lexeme.index(after: lexeme.startIndex)
+                    let tail = String(lexeme[firstIndex...])
+                    
+                    for scalar in tail.unicodeScalars {
+                        if !isIdentifierTail(scalar) {
+                            fatalError()
+                        }
+                    }
+                    
                     return Token(type: .identifier(lexeme), line: line)
                 }
             } else if isDigit(character) {
@@ -342,6 +361,19 @@ public final class Lexer {
             return true
         default:
             return false
+        }
+    }
+    
+    func isIdentifierTail(_ c: UnicodeScalar) -> Bool {
+        switch c.value {
+        case 0x30 ... 0x39, // 0-9
+        0x0300 ... 0x036F,
+        0x1DC0 ... 0x1DFF,
+        0x20D0 ... 0x20FF,
+        0xFE20 ... 0xFE2F:
+            return true
+        default:
+            return isIdentifierHead(c)
         }
     }
     
