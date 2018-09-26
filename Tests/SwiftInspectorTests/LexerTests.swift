@@ -46,4 +46,12 @@ class LexerTests: XCTestCase {
             XCTAssertFalse(lexer.isDigit(nonNumber))
         }
     }
+    
+    func testIsIdentifier() {
+        let input: [UnicodeScalar] = ["1"]
+        
+        for i in input {
+            XCTAssertFalse(lexer.isIdentifierHead(i))
+        }
+    }
 }

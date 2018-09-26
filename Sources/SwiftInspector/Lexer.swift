@@ -173,8 +173,20 @@ public final class Lexer {
         case "\\":
             // Key Paths
             fatalError()
+        case "#":
+            while (!isAtEnd && !isWhitespace(peek())) {
+                let _ = advance()
+            }
+            
+            let lexeme = substringInSource(from: start, to: current)
+            
+            if let pound = Keyword.Pound(rawValue: lexeme) {
+                return Token(type: .keyword(.pound(pound)), line: line)
+            } else {
+                fatalError()
+            }
         default:
-            if isKeyword(character) {
+            if isIdentifierHead(character) {
                 while (!isAtEnd && !isWhitespace(peek())) {
                     let _ = advance()
                 }
@@ -186,13 +198,11 @@ public final class Lexer {
                 } else if let expression = Keyword.Expression(rawValue: lexeme) {
                     return Token(type: .keyword(.expression(expression)), line: line)
                 } else if let statement = Keyword.Statement(rawValue: lexeme) {
-                   return Token(type: .keyword(.statement(statement)), line: line)
-                } else if let pound = Keyword.Pound(rawValue: lexeme) {
-                    return Token(type: .keyword(.pound(pound)), line: line)
+                    return Token(type: .keyword(.statement(statement)), line: line)
                 } else if let booleanLiteralToken = booleanLiteral(withLexeme: lexeme) {
                     return booleanLiteralToken
                 } else {
-                    fatalError()
+                    return Token(type: .identifier(lexeme), line: line)
                 }
             } else if isDigit(character) {
                 if let numericalLiteralToken = numericalLiteral() {
@@ -275,6 +285,64 @@ public final class Lexer {
         let underscoreSet = CharacterSet(charactersIn: "#")
         let combinedSet = letters.union(underscoreSet)
         return combinedSet.contains(c)
+    }
+    
+    public func isIdentifierHead(_ c: UnicodeScalar) -> Bool {
+        // https://github.com/nicklockwood/SwiftFormat/blob/1873197ca6b64b1d72585b69df433d40d600f3ce/Sources/Tokenizer.swift#L734
+        switch c.value {
+        case 0x41...0x5A, // A-Z
+        0x61 ... 0x7A, // a-z
+        0x5F, 0x24, // _ and $
+        0x00A8, 0x00AA, 0x00AD, 0x00AF,
+        0x00B2 ... 0x00B5,
+        0x00B7 ... 0x00BA,
+        0x00BC ... 0x00BE,
+        0x00C0 ... 0x00D6,
+        0x00D8 ... 0x00F6,
+        0x00F8 ... 0x00FF,
+        0x0100 ... 0x02FF,
+        0x0370 ... 0x167F,
+        0x1681 ... 0x180D,
+        0x180F ... 0x1DBF,
+        0x1E00 ... 0x1FFF,
+        0x200B ... 0x200D,
+        0x202A ... 0x202E,
+        0x203F ... 0x2040,
+        0x2054,
+        0x2060 ... 0x206F,
+        0x2070 ... 0x20CF,
+        0x2100 ... 0x218F,
+        0x2460 ... 0x24FF,
+        0x2776 ... 0x2793,
+        0x2C00 ... 0x2DFF,
+        0x2E80 ... 0x2FFF,
+        0x3004 ... 0x3007,
+        0x3021 ... 0x302F,
+        0x3031 ... 0x303F,
+        0x3040 ... 0xD7FF,
+        0xF900 ... 0xFD3D,
+        0xFD40 ... 0xFDCF,
+        0xFDF0 ... 0xFE1F,
+        0xFE30 ... 0xFE44,
+        0xFE47 ... 0xFFFD,
+        0x10000 ... 0x1FFFD,
+        0x20000 ... 0x2FFFD,
+        0x30000 ... 0x3FFFD,
+        0x40000 ... 0x4FFFD,
+        0x50000 ... 0x5FFFD,
+        0x60000 ... 0x6FFFD,
+        0x70000 ... 0x7FFFD,
+        0x80000 ... 0x8FFFD,
+        0x90000 ... 0x9FFFD,
+        0xA0000 ... 0xAFFFD,
+        0xB0000 ... 0xBFFFD,
+        0xC0000 ... 0xCFFFD,
+        0xD0000 ... 0xDFFFD,
+        0xE0000 ... 0xEFFFD:
+            return true
+        default:
+            return false
+        }
     }
     
     public func isWhitespace(_ c: UnicodeScalar) -> Bool {

@@ -322,6 +322,8 @@ public func == (lhs: TokenType, rhs: TokenType) -> Bool {
         return lhs == rhs
     case (.literal(let lhs), .literal(let rhs)):
         return lhs == rhs
+    case (.identifier(let lhs), .identifier(let rhs)):
+        return lhs == rhs
     case (.eof, .eof):
         return true
     default: return false

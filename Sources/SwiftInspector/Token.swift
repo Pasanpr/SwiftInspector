@@ -34,15 +34,9 @@ public enum TokenType {
     case whitespace(Whitespace)
     case punctuation(Punctuation)
     case keyword(Keyword)
-    
-    // Operator
     case `operator`(Operator)
-    
-    // Identifier
-    
-    // Literal
     case literal(Literal)
-    
+    case identifier(String)
     case eof
 }
 

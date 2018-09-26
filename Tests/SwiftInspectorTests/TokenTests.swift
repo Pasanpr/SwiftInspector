@@ -510,4 +510,16 @@ class TokenTests: XCTestCase {
         let lexer = Lexer(source: input)
         XCTAssertEqual(try! lexer.scan(), output)
     }
+    
+    func testIdentifier() {
+        let input = "foo"
+        
+        let output = [
+            Token(type: .identifier("foo"), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
 }
