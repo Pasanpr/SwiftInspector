@@ -67,7 +67,9 @@ public final class Lexer {
         case ":": return Token(type: .punctuation(.colon), line: line)
         case ";": return Token(type: .punctuation(.semicolon), line: line)
         case "/":
-            if match(expected: "/") {
+            if match(expected: "=") {
+                return Token(type: .operator(.divisionAssignment), line: line)
+            } else if match(expected: "/") {
                 while (peek() != "\n" && !isAtEnd) {
                     let _ = advance()
                 }
@@ -120,8 +122,18 @@ public final class Lexer {
             } else {
                 return Token(type: .operator(.subtraction), line: line)
             }
-        case "*": return Token(type: .operator(.multiplication), line: line)
-        case "%": return Token(type: .operator(.remainder), line: line)
+        case "*":
+            if match(expected: "=") {
+                return Token(type: .operator(.multiplicationAssignment), line: line)
+            } else {
+                return Token(type: .operator(.multiplication), line: line)
+            }
+        case "%":
+            if match(expected: "=") {
+                return Token(type: .operator(.remainderAssignment), line: line)
+            } else {
+                return Token(type: .operator(.remainder), line: line)
+            }
         case "!":
             if match(expected: "=") {
                 while (peek() == "=" && !isAtEnd) {
