@@ -147,8 +147,10 @@ public final class Lexer {
                 case "!==": return Token(type: .operator(.identityNot), line: line)
                 default: throw LexerError.invalidToken
                 }
+            } else if isIdentifierHead(peek()) {
+                return Token(type: .operator(.logicalNot), line: line)
             } else {
-                fatalError()
+                return Token(type: .operator(.forcedOptional), line: line)
             }
         case "<":
             if match(expected: "=") {
@@ -166,7 +168,7 @@ public final class Lexer {
             if match(expected: "?") {
                 return Token(type: .operator(.nilCoalescing), line: line)
             } else {
-                fatalError()
+                return Token(type: .operator(.optional), line: line)
             }
         case "&":
             if match(expected: "&") {
@@ -209,7 +211,7 @@ public final class Lexer {
             return Token(type: .identifier(lexeme), line: line)
         default:
             if isIdentifierHead(character) {
-                while (!isAtEnd && !isWhitespace(peek())) {
+                while (!isAtEnd && !isReservedPunctuation(peek()) && !isWhitespace(peek())) {
                     let _ = advance()
                 }
                 
@@ -391,6 +393,12 @@ public final class Lexer {
     
     public func isWhitespace(_ c: UnicodeScalar) -> Bool {
         let set = CharacterSet.whitespacesAndNewlines
+        return set.contains(c)
+    }
+    
+    public func isReservedPunctuation(_ c: UnicodeScalar) -> Bool {
+        var set = CharacterSet()
+        set.insert(charactersIn: "!?")
         return set.contains(c)
     }
     

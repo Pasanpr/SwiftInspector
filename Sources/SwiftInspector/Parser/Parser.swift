@@ -38,67 +38,66 @@ class Parser {
     }
     
     private func expression() throws -> Expression {
-        let prefixExpr = try prefix()
-        let binaryExpr = try binaryExpression()
-        
-        return Expression.prefix(try: nil, expression: prefixExpr, binaryExpression: binaryExpr)
-    }
-    
-    
-    
-    // Right associative
-    private func assignment() throws -> BinaryExpression {
-        
-        while match(types: .operator(.subtractionAssignment), .operator(.additionAssignment), .operator(.remainderAssignment), .operator(.divisionAssignment), .operator(.multiplicationAssignment), .operator(.assignment)) {
-            let rhs = try ternary()
-            return BinaryExpression.assignment(try: nil, rhs: rhs)
-        }
-        
-        throw ParserError.expectedAssignmentExpression
-    }
-    
-    private func ternary() throws -> BinaryExpression {
-        return try logicalOr()
-    }
-    
-    private func logicalOr() throws -> BinaryExpression {
-        return try logicalAnd()
-    }
-    
-    private func logicalAnd() throws -> BinaryExpression {
-        return try comparison()
-    }
-    
-    private func comparison() throws -> BinaryExpression {
-        return try nilCoalescing()
-    }
-    
-    private func nilCoalescing() throws -> BinaryExpression {
-        return try casting()
-    }
-    
-    private func casting() throws -> BinaryExpression {
         return try addition()
     }
     
-    private func addition() throws -> BinaryExpression {
+    // Right associative
+//    private func assignment() throws -> BinaryExpression {
+//
+//        while match(types: .operator(.subtractionAssignment), .operator(.additionAssignment), .operator(.remainderAssignment), .operator(.divisionAssignment), .operator(.multiplicationAssignment), .operator(.assignment)) {
+//            let rhs = try ternary()
+//            return BinaryExpression.assignment(try: nil, rhs: rhs)
+//        }
+//
+//        throw ParserError.expectedAssignmentExpression
+//    }
+//
+//    private func ternary() throws -> BinaryExpression {
+//        return try logicalOr()
+//    }
+//
+//    private func logicalOr() throws -> BinaryExpression {
+//        return try logicalAnd()
+//    }
+//
+//    private func logicalAnd() throws -> BinaryExpression {
+//        return try comparison()
+//    }
+//
+//    private func comparison() throws -> BinaryExpression {
+//        return try nilCoalescing()
+//    }
+//
+//    private func nilCoalescing() throws -> BinaryExpression {
+//        return try casting()
+//    }
+//
+//    private func casting() throws -> BinaryExpression {
+//        return try addition()
+//    }
+    
+    private func addition() throws -> Expression {
         let lhs = try multiplication()
         
         while match(types: .operator(.addition), .operator(.subtraction)) {
             let op = previous()
             let rhs = try multiplication()
-            return BinaryExpression.binary(operator: op, lhs: lhs, rhs: rhs)
+            return Expression.binary(BinaryExpression.binary(operator: op, lhs: lhs, rhs: rhs))
         }
+        
+        return lhs
     }
     
-    private func multiplication() throws -> BinaryExpression {
+    private func multiplication() throws -> Expression {
         let lhs = try prefix()
         
         while match(types: .operator(.multiplication), .operator(.division), .operator(.remainder)) {
             let op = previous()
             let rhs = try prefix()
-            return BinaryExpression.prefix(operator: op, lhs: lhs, rhs: rhs)
+            return Expression.binary(BinaryExpression.prefix(operator: op, lhs: lhs, rhs: rhs))
         }
+        
+        return Expression.prefix(lhs)
     }
     
     private func prefix() throws -> PrefixExpression {

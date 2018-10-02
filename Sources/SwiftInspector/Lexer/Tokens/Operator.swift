@@ -37,6 +37,9 @@ public enum Operator: AutoEquatable, CaseIterable {
     case logicalNot // not implemented
     case logicalAnd
     case logicalOr
+    case returnType
+    case optional
+    case forcedOptional
 }
 
 extension Operator: CustomStringConvertible {
@@ -71,6 +74,9 @@ extension Operator: CustomStringConvertible {
         case .logicalNot: return "!"
         case .logicalAnd: return "&&"
         case .logicalOr: return "||"
+        case .returnType: return "->"
+        case .optional: return "?"
+        case .forcedOptional: return "!"
         }
     }
 }

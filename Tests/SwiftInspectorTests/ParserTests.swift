@@ -20,7 +20,7 @@ class ParserTests: XCTestCase {
         
         let parser = Parser(tokens: tokens)
         let statement = try! parser.parse()
-        print(ASTPrinter().processStatement(statement))
+        
     }
 
 }

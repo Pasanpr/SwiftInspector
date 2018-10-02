@@ -21,9 +21,3 @@ public enum PrefixExpression {
 }
 
 extension PrefixExpression: AutoEquatable {}
-
-extension PrefixExpression: Printable {
-    func accept(printer: Printer) -> String {
-        return printer.processPrefixExpression(self)
-    }
-}

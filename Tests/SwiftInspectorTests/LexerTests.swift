@@ -54,4 +54,12 @@ class LexerTests: XCTestCase {
             XCTAssertFalse(lexer.isIdentifierHead(i))
         }
     }
+    
+    func testIsReservedPunctuation() {
+        let input: [UnicodeScalar] = ["?", "!"]
+        
+        for i in input {
+            XCTAssertTrue(lexer.isReservedPunctuation(i))
+        }
+    }
 }

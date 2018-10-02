@@ -76,24 +76,10 @@ import Foundation
 
 public enum BinaryExpression {
     indirect case prefix(operator: Token, lhs: PrefixExpression, rhs: PrefixExpression)
-    indirect case binary(operator: Token, lhs: BinaryExpression, rhs: BinaryExpression)
+    indirect case binary(operator: Token, lhs: Expression, rhs: Expression)
     indirect case assignment(try: Bool?, rhs: BinaryExpression)
     case conditional
     indirect case typeCasting(operator: Token, lhs: BinaryExpression, rhs: BinaryExpression)
 }
 
 extension BinaryExpression: AutoEquatable {}
-
-extension BinaryExpression: CustomStringConvertible {
-    public var description: String {
-        switch self {
-        case .prefix(let `operator`, let lhs, let rhs):
-            if let lhs = lhs {
-                return "(\(`operator`.type) \(lhs) \(rhs))"
-            } else {
-                return "(\(`operator`.type) \(rhs))"
-            }
-        default: return "implement"
-        }
-    }
-}

@@ -18,12 +18,12 @@ import Foundation
  try-operator → try | try ? | try !
 */
 
-enum Expression {
-    case prefix(try: Bool?, expression: PrefixExpression, binaryExpression: BinaryExpression?)
+public enum Expression {
+    case prefixBinary(try: Bool?, lhs: PrefixExpression, operator: Token, rhs: PrefixExpression)
+    
+    
+    case prefix(PrefixExpression)
+    case binary(BinaryExpression)
 }
 
-extension Expression: Printable {
-    func accept(printer: Printer) -> String {
-        return printer.processExpression(self)
-    }
-}
+extension Expression: AutoEquatable {}

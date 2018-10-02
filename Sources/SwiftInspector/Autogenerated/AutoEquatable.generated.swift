@@ -54,6 +54,23 @@ public func == (lhs: BinaryExpression, rhs: BinaryExpression) -> Bool {
     default: return false
     }
 }
+// MARK: - Expression AutoEquatable
+extension Expression: Equatable {}
+public func == (lhs: Expression, rhs: Expression) -> Bool {
+    switch (lhs, rhs) {
+    case (.prefixBinary(let lhs), .prefixBinary(let rhs)):
+        if lhs.try != rhs.try { return false }
+        if lhs.lhs != rhs.lhs { return false }
+        if lhs.operator != rhs.operator { return false }
+        if lhs.rhs != rhs.rhs { return false }
+        return true
+    case (.prefix(let lhs), .prefix(let rhs)):
+        return lhs == rhs
+    case (.binary(let lhs), .binary(let rhs)):
+        return lhs == rhs
+    default: return false
+    }
+}
 // MARK: - Keyword AutoEquatable
 extension Keyword: Equatable {}
 public func == (lhs: Keyword, rhs: Keyword) -> Bool {
@@ -311,6 +328,12 @@ public func == (lhs: Operator, rhs: Operator) -> Bool {
     case (.logicalAnd, .logicalAnd):
         return true
     case (.logicalOr, .logicalOr):
+        return true
+    case (.returnType, .returnType):
+        return true
+    case (.optional, .optional):
+        return true
+    case (.forcedOptional, .forcedOptional):
         return true
     default: return false
     }

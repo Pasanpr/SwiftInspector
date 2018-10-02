@@ -11,12 +11,6 @@ enum Statement {
     case expression(Expression)
 }
 
-extension Statement: Printable {
-    func accept(printer: Printer) -> String {
-        return printer.processStatement(self)
-    }
-}
-
 extension Statement: Inspectable {
     func accept(_ inspector: Inspector) {
         inspector.inspect(self)

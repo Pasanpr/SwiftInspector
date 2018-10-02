@@ -193,8 +193,7 @@ class TokenTests: XCTestCase {
         let input = "/=+-*"
         
         let output: [Token] = [
-            Token(type: .operator(.division), line: 1),
-            Token(type: .operator(.assignment), line: 1),
+            Token(type: .operator(.divisionAssignment), line: 1),
             Token(type: .operator(.addition), line: 1),
             Token(type: .operator(.subtraction), line: 1),
             Token(type: .operator(.multiplication), line: 1),
@@ -546,6 +545,56 @@ class TokenTests: XCTestCase {
             Token(type: .operator(.assignment), line: 1),
             Token(type: .whitespace(.whitespaceItem(.space)), line: 1),
             Token(type: .literal(.string("Swift")), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
+    func testQuestionMark() {
+        let input = "?"
+        
+        let output = [
+            Token(type: .operator(.optional), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
+    func testCast() {
+        let input = "as"
+        
+        let output = [
+            Token(type: .keyword(.statement(.as)), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
+    func testOptionalCast() {
+        let input = "as?"
+        
+        let output = [
+            Token(type: .keyword(.statement(.as)), line: 1),
+            Token(type: .operator(.optional), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let lexer = Lexer(source: input)
+        XCTAssertEqual(try! lexer.scan(), output)
+    }
+    
+    func testExplicitCast() {
+        let input = "as!"
+        
+        let output = [
+            Token(type: .keyword(.statement(.as)), line: 1),
+            Token(type: .operator(.forcedOptional), line: 1),
             Token(type: .eof, line: 1)
         ]
         
