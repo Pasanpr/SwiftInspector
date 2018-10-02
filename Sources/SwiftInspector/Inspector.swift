@@ -6,3 +6,11 @@
 //
 
 import Foundation
+
+protocol Inspector {
+    func inspect(_ statement: Statement)
+}
+
+protocol Inspectable {
+    func accept(_ inspector: Inspector)
+}

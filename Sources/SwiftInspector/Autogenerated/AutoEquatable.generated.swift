@@ -26,6 +26,34 @@ fileprivate func compareArrays<T>(lhs: [T], rhs: [T], compare: (_ lhs: T, _ rhs:
 // MARK: - AutoEquatable for classes, protocols, structs
 
 // MARK: - AutoEquatable for Enums
+// MARK: - BinaryExpression AutoEquatable
+extension BinaryExpression: Equatable {}
+public func == (lhs: BinaryExpression, rhs: BinaryExpression) -> Bool {
+    switch (lhs, rhs) {
+    case (.prefix(let lhs), .prefix(let rhs)):
+        if lhs.operator != rhs.operator { return false }
+        if lhs.lhs != rhs.lhs { return false }
+        if lhs.rhs != rhs.rhs { return false }
+        return true
+    case (.binary(let lhs), .binary(let rhs)):
+        if lhs.operator != rhs.operator { return false }
+        if lhs.lhs != rhs.lhs { return false }
+        if lhs.rhs != rhs.rhs { return false }
+        return true
+    case (.assignment(let lhs), .assignment(let rhs)):
+        if lhs.try != rhs.try { return false }
+        if lhs.rhs != rhs.rhs { return false }
+        return true
+    case (.conditional, .conditional):
+        return true
+    case (.typeCasting(let lhs), .typeCasting(let rhs)):
+        if lhs.operator != rhs.operator { return false }
+        if lhs.lhs != rhs.lhs { return false }
+        if lhs.rhs != rhs.rhs { return false }
+        return true
+    default: return false
+    }
+}
 // MARK: - Keyword AutoEquatable
 extension Keyword: Equatable {}
 public func == (lhs: Keyword, rhs: Keyword) -> Bool {
@@ -242,6 +270,12 @@ public func == (lhs: Operator, rhs: Operator) -> Bool {
         return true
     case (.subtractionAssignment, .subtractionAssignment):
         return true
+    case (.remainderAssignment, .remainderAssignment):
+        return true
+    case (.divisionAssignment, .divisionAssignment):
+        return true
+    case (.multiplicationAssignment, .multiplicationAssignment):
+        return true
     case (.prefixMinus, .prefixMinus):
         return true
     case (.prefixPlus, .prefixPlus):
@@ -277,6 +311,79 @@ public func == (lhs: Operator, rhs: Operator) -> Bool {
     case (.logicalAnd, .logicalAnd):
         return true
     case (.logicalOr, .logicalOr):
+        return true
+    default: return false
+    }
+}
+// MARK: - PostfixExpression AutoEquatable
+extension PostfixExpression: Equatable {}
+public func == (lhs: PostfixExpression, rhs: PostfixExpression) -> Bool {
+    switch (lhs, rhs) {
+    case (.primary(let lhs), .primary(let rhs)):
+        return lhs == rhs
+    case (.postfix(let lhs), .postfix(let rhs)):
+        if lhs.expression != rhs.expression { return false }
+        if lhs.operator != rhs.operator { return false }
+        return true
+    case (.functionCall, .functionCall):
+        return true
+    case (.initializer, .initializer):
+        return true
+    case (.explicitMember, .explicitMember):
+        return true
+    case (.postfixSelf, .postfixSelf):
+        return true
+    case (.`subscript`, .`subscript`):
+        return true
+    case (.forcedValue, .forcedValue):
+        return true
+    case (.optionalChaining, .optionalChaining):
+        return true
+    default: return false
+    }
+}
+// MARK: - PrefixExpression AutoEquatable
+extension PrefixExpression: Equatable {}
+public func == (lhs: PrefixExpression, rhs: PrefixExpression) -> Bool {
+    switch (lhs, rhs) {
+    case (.prefix(let lhs), .prefix(let rhs)):
+        if lhs.operator != rhs.operator { return false }
+        if lhs.rhs != rhs.rhs { return false }
+        return true
+    case (.`inout`(let lhs), .`inout`(let rhs)):
+        return lhs == rhs
+    default: return false
+    }
+}
+// MARK: - PrimaryExpression AutoEquatable
+extension PrimaryExpression: Equatable {}
+public func == (lhs: PrimaryExpression, rhs: PrimaryExpression) -> Bool {
+    switch (lhs, rhs) {
+    case (.identifier(let lhs), .identifier(let rhs)):
+        if lhs.0 != rhs.0 { return false }
+        if lhs.genericArgs != rhs.genericArgs { return false }
+        return true
+    case (.literal(let lhs), .literal(let rhs)):
+        return lhs == rhs
+    case (.`self`, .`self`):
+        return true
+    case (.superclass, .superclass):
+        return true
+    case (.closure, .closure):
+        return true
+    case (.parenthesized, .parenthesized):
+        return true
+    case (.tuple, .tuple):
+        return true
+    case (.implicitMember, .implicitMember):
+        return true
+    case (.wildcard, .wildcard):
+        return true
+    case (.keyPath, .keyPath):
+        return true
+    case (.selector, .selector):
+        return true
+    case (.keyPathString, .keyPathString):
         return true
     default: return false
     }

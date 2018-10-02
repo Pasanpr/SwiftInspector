@@ -5,28 +5,22 @@
 //  Created by Pasan Premaratne on 9/27/18.
 //
 
+@testable import SwiftInspector
 import XCTest
 
 class ParserTests: XCTestCase {
 
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testParser() {
+        let tokens = [
+            Token(type: .literal(.integer(1)), line: 1),
+            Token(type: .operator(.addition), line: 1),
+            Token(type: .literal(.integer(2)), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let parser = Parser(tokens: tokens)
+        let statement = try! parser.parse()
+        print(ASTPrinter().processStatement(statement))
     }
 
 }

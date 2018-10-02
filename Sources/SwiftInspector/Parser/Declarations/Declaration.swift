@@ -6,3 +6,7 @@
 //
 
 import Foundation
+
+enum Declaration {
+    case constant(name: String, type: String?, expression: Expression)
+}
