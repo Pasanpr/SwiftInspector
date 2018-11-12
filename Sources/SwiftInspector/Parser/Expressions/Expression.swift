@@ -19,9 +19,6 @@ import Foundation
 */
 
 public enum Expression {
-    case prefixBinary(try: Bool?, lhs: PrefixExpression, operator: Token, rhs: PrefixExpression)
-    
-    
     case prefix(PrefixExpression)
     case binary(BinaryExpression)
 }

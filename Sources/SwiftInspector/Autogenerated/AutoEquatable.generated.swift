@@ -58,12 +58,6 @@ public func == (lhs: BinaryExpression, rhs: BinaryExpression) -> Bool {
 extension Expression: Equatable {}
 public func == (lhs: Expression, rhs: Expression) -> Bool {
     switch (lhs, rhs) {
-    case (.prefixBinary(let lhs), .prefixBinary(let rhs)):
-        if lhs.try != rhs.try { return false }
-        if lhs.lhs != rhs.lhs { return false }
-        if lhs.operator != rhs.operator { return false }
-        if lhs.rhs != rhs.rhs { return false }
-        return true
     case (.prefix(let lhs), .prefix(let rhs)):
         return lhs == rhs
     case (.binary(let lhs), .binary(let rhs)):

@@ -16,3 +16,4 @@ extension Statement: Inspectable {
         inspector.inspect(self)
     }
 }
+

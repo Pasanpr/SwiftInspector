@@ -14,3 +14,13 @@ protocol Inspector {
 protocol Inspectable {
     func accept(_ inspector: Inspector)
 }
+
+public class SomeInspector: Inspector {
+    func inspect(_ statement: Statement) {
+        switch statement {
+        case .expression(let expr):
+            print(expr)
+            print("-----")
+        }
+    }
+}
