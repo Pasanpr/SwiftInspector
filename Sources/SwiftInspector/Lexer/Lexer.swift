@@ -12,19 +12,28 @@ public enum LexerError: Error {
 }
 
 public final class Lexer {
-    private let source: String
+    private var source: String
     private var tokens: Array<Token>
     private var start = 0
     public var current = 0
     private var line = 1
     
-    var isAtEnd: Bool {
+    private var isAtEnd: Bool {
         return current >= source.count
+    }
+    
+    convenience init() {
+        self.init(source: "")
     }
     
     init(source: String) {
         self.source = source
         self.tokens = []
+    }
+    
+    public func scan(source: String) throws -> [Token] {
+        self.source = source
+        return try scan()
     }
     
     public func scan() throws -> [Token] {

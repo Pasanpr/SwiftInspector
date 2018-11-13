@@ -7,13 +7,12 @@
 
 import Foundation
 
-enum Statement {
+public enum Statement {
     case expression(Expression)
+    case declaration(Declaration)
 }
 
-extension Statement: Inspectable {
-    func accept(_ inspector: Inspector) {
-        inspector.inspect(self)
-    }
-}
+extension Statement: AutoEquatable {}
+
+
 

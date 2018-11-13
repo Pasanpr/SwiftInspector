@@ -27,7 +27,7 @@ extension Token: Equatable {
 
 extension Token: CustomStringConvertible {
     public var description: String {
-        return "\(type) - line: \(line)"
+        return "\(type)"
     }
 }
 

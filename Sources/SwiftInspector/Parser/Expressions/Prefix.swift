@@ -16,8 +16,15 @@ import Foundation
  */
 
 public enum PrefixExpression {
-    case prefix(operator: Token?, rhs: PostfixExpression)
     case `inout`(identifier: String)
 }
 
 extension PrefixExpression: AutoEquatable {}
+
+extension PrefixExpression: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        default: return "fix"
+        }
+    }
+}

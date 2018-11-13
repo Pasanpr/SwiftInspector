@@ -13,15 +13,24 @@ enum ParserError: Error {
 }
 
 class Parser {
-    let tokens: [Token]
-    var current = 0
+    private var tokens: [Token]
+    private var current = 0
     
-    var isAtEnd: Bool {
+    private var isAtEnd: Bool {
         return peek().type == .eof
+    }
+    
+    convenience init() {
+        self.init(tokens: [])
     }
     
     init(tokens: [Token]) {
         self.tokens = tokens
+    }
+    
+    public func parse(with tokens: [Token]) throws -> Program {
+        self.tokens = tokens
+        return try parse()
     }
     
     func parse() throws -> Program {
@@ -34,7 +43,22 @@ class Parser {
     }
     
     private func statement() throws -> Statement {
-        return try Statement.expression(expression())
+        if match(types: .keyword(.declaration(.var))) {
+            return try varDeclaration()
+        } else {
+            return try Statement.expression(expression())
+        }
+    }
+    
+    private func varDeclaration() throws -> Statement {
+        let identifier = try primary()
+        
+        if match(types: .operator(.assignment)) {
+            let rhs = try expression()
+            return Statement.declaration(.variable(identifier: identifier, type: nil, expression: rhs))
+        } else {
+            throw ParserError.expectedAssignmentExpression
+        }
     }
     
     private func expression() throws -> Expression {
@@ -82,7 +106,7 @@ class Parser {
         while match(types: .operator(.addition), .operator(.subtraction)) {
             let op = previous()
             let rhs = try multiplication()
-            return Expression.binary(BinaryExpression.binary(operator: op, lhs: lhs, rhs: rhs))
+            return .binary(operator: op, lhs: lhs, rhs: rhs)
         }
         
         return lhs
@@ -94,20 +118,20 @@ class Parser {
         while match(types: .operator(.multiplication), .operator(.division), .operator(.remainder)) {
             let op = previous()
             let rhs = try prefix()
-            return Expression.binary(BinaryExpression.prefix(operator: op, lhs: lhs, rhs: rhs))
+            return Expression.binary(operator: op, lhs: lhs, rhs: rhs)
         }
         
-        return Expression.prefix(lhs)
+        return lhs
     }
     
-    private func prefix() throws -> PrefixExpression {
+    private func prefix() throws -> Expression {
         if match(types: .operator(.logicalNot)) {
             let op = previous()
             let rhs = try postfix()
-            return PrefixExpression.prefix(operator: op, rhs: rhs)
+            return Expression.prefix(operator: op, rhs: rhs)
         }
         
-        return try PrefixExpression.prefix(operator: nil, rhs: postfix())
+        return try Expression.prefix(operator: nil, rhs: postfix())
     }
     
     private func postfix() throws -> PostfixExpression {
@@ -115,10 +139,19 @@ class Parser {
     }
     
     private func primary() throws -> PrimaryExpression {
-        if case .literal(.integer(let value)) = peek().type {
+        let type = peek().type
+        
+        switch type {
+        case .identifier(let name):
+            let _ = advance()
+            return PrimaryExpression.identifier(name, genericArgs: nil)
+        case .literal(.integer(let value)):
             let _ = advance()
             return PrimaryExpression.literal(value.description)
-        } else {
+        case .literal(.string(let value)):
+            let _ = advance()
+            return PrimaryExpression.literal(value)
+        default:
             throw ParserError.expectedPrimaryExpression
         }
     }

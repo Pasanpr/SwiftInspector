@@ -24,17 +24,18 @@ fileprivate func compareArrays<T>(lhs: [T], rhs: [T], compare: (_ lhs: T, _ rhs:
 
 
 // MARK: - AutoEquatable for classes, protocols, structs
+// MARK: - Program AutoEquatable
+extension Program: Equatable {}
+public func == (lhs: Program, rhs: Program) -> Bool {
+    guard lhs.statements == rhs.statements else { return false }
+    return true
+}
 
 // MARK: - AutoEquatable for Enums
 // MARK: - BinaryExpression AutoEquatable
 extension BinaryExpression: Equatable {}
 public func == (lhs: BinaryExpression, rhs: BinaryExpression) -> Bool {
     switch (lhs, rhs) {
-    case (.prefix(let lhs), .prefix(let rhs)):
-        if lhs.operator != rhs.operator { return false }
-        if lhs.lhs != rhs.lhs { return false }
-        if lhs.rhs != rhs.rhs { return false }
-        return true
     case (.binary(let lhs), .binary(let rhs)):
         if lhs.operator != rhs.operator { return false }
         if lhs.lhs != rhs.lhs { return false }
@@ -54,13 +55,37 @@ public func == (lhs: BinaryExpression, rhs: BinaryExpression) -> Bool {
     default: return false
     }
 }
+// MARK: - Declaration AutoEquatable
+extension Declaration: Equatable {}
+public func == (lhs: Declaration, rhs: Declaration) -> Bool {
+    switch (lhs, rhs) {
+    case (.variable(let lhs), .variable(let rhs)):
+        if lhs.identifier != rhs.identifier { return false }
+        if lhs.type != rhs.type { return false }
+        if lhs.expression != rhs.expression { return false }
+        return true
+    case (.constant(let lhs), .constant(let rhs)):
+        if lhs.name != rhs.name { return false }
+        if lhs.type != rhs.type { return false }
+        if lhs.expression != rhs.expression { return false }
+        return true
+    default: return false
+    }
+}
 // MARK: - Expression AutoEquatable
 extension Expression: Equatable {}
 public func == (lhs: Expression, rhs: Expression) -> Bool {
     switch (lhs, rhs) {
     case (.prefix(let lhs), .prefix(let rhs)):
-        return lhs == rhs
+        if lhs.operator != rhs.operator { return false }
+        if lhs.rhs != rhs.rhs { return false }
+        return true
     case (.binary(let lhs), .binary(let rhs)):
+        if lhs.operator != rhs.operator { return false }
+        if lhs.lhs != rhs.lhs { return false }
+        if lhs.rhs != rhs.rhs { return false }
+        return true
+    case (.primary(let lhs), .primary(let rhs)):
         return lhs == rhs
     default: return false
     }
@@ -363,13 +388,8 @@ public func == (lhs: PostfixExpression, rhs: PostfixExpression) -> Bool {
 extension PrefixExpression: Equatable {}
 public func == (lhs: PrefixExpression, rhs: PrefixExpression) -> Bool {
     switch (lhs, rhs) {
-    case (.prefix(let lhs), .prefix(let rhs)):
-        if lhs.operator != rhs.operator { return false }
-        if lhs.rhs != rhs.rhs { return false }
-        return true
     case (.`inout`(let lhs), .`inout`(let rhs)):
         return lhs == rhs
-    default: return false
     }
 }
 // MARK: - PrimaryExpression AutoEquatable
@@ -429,6 +449,17 @@ public func == (lhs: Punctuation, rhs: Punctuation) -> Bool {
         return true
     case (.semicolon, .semicolon):
         return true
+    default: return false
+    }
+}
+// MARK: - Statement AutoEquatable
+extension Statement: Equatable {}
+public func == (lhs: Statement, rhs: Statement) -> Bool {
+    switch (lhs, rhs) {
+    case (.expression(let lhs), .expression(let rhs)):
+        return lhs == rhs
+    case (.declaration(let lhs), .declaration(let rhs)):
+        return lhs == rhs
     default: return false
     }
 }

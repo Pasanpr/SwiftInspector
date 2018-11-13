@@ -19,8 +19,11 @@ import Foundation
 */
 
 public enum Expression {
-    case prefix(PrefixExpression)
-    case binary(BinaryExpression)
+    case prefix(operator: Token?, rhs: PostfixExpression)
+    indirect case binary(operator: Token, lhs: Expression, rhs: Expression)
+    case primary(PrimaryExpression)
 }
 
 extension Expression: AutoEquatable {}
+
+

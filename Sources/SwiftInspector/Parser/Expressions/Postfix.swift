@@ -34,13 +34,3 @@ public enum PostfixExpression {
 }
 
 extension PostfixExpression: AutoEquatable {}
-
-extension PostfixExpression: CustomStringConvertible {
-    public var description: String {
-        switch self {
-        case .primary(let expr): return expr.description
-        case .postfix(let expression, let `operator`): return "implement"
-        default: return "implement"
-        }
-    }
-}
