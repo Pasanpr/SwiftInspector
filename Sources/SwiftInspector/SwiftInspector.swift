@@ -10,6 +10,7 @@ public class SwiftInspector {
     
     public enum Declaration {
         case variable
+        case constant
     }
     
     public func contains(_ declaration: Declaration, named name: String) -> Bool {

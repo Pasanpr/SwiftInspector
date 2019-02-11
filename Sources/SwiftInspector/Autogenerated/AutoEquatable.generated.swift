@@ -65,7 +65,7 @@ public func == (lhs: Declaration, rhs: Declaration) -> Bool {
         if lhs.expression != rhs.expression { return false }
         return true
     case (.constant(let lhs), .constant(let rhs)):
-        if lhs.name != rhs.name { return false }
+        if lhs.identifier != rhs.identifier { return false }
         if lhs.type != rhs.type { return false }
         if lhs.expression != rhs.expression { return false }
         return true
@@ -484,9 +484,9 @@ public func == (lhs: TokenType, rhs: TokenType) -> Bool {
     default: return false
     }
 }
-// MARK: - Whitespace AutoEquatable
-extension Whitespace: Equatable {}
-public func == (lhs: Whitespace, rhs: Whitespace) -> Bool {
+// MARK: - TokenType.Whitespace AutoEquatable
+extension TokenType.Whitespace: Equatable {}
+public func == (lhs: TokenType.Whitespace, rhs: TokenType.Whitespace) -> Bool {
     switch (lhs, rhs) {
     case (.whitespaceItem(let lhs), .whitespaceItem(let rhs)):
         return lhs == rhs
@@ -499,9 +499,9 @@ public func == (lhs: Whitespace, rhs: Whitespace) -> Bool {
     default: return false
     }
 }
-// MARK: - Whitespace.LineBreak AutoEquatable
-extension Whitespace.LineBreak: Equatable {}
-public func == (lhs: Whitespace.LineBreak, rhs: Whitespace.LineBreak) -> Bool {
+// MARK: - TokenType.Whitespace.LineBreak AutoEquatable
+extension TokenType.Whitespace.LineBreak: Equatable {}
+public func == (lhs: TokenType.Whitespace.LineBreak, rhs: TokenType.Whitespace.LineBreak) -> Bool {
     switch (lhs, rhs) {
     case (.carriageReturn, .carriageReturn):
         return true
@@ -510,9 +510,9 @@ public func == (lhs: Whitespace.LineBreak, rhs: Whitespace.LineBreak) -> Bool {
     default: return false
     }
 }
-// MARK: - Whitespace.WhitespaceItem AutoEquatable
-extension Whitespace.WhitespaceItem: Equatable {}
-public func == (lhs: Whitespace.WhitespaceItem, rhs: Whitespace.WhitespaceItem) -> Bool {
+// MARK: - TokenType.Whitespace.WhitespaceItem AutoEquatable
+extension TokenType.Whitespace.WhitespaceItem: Equatable {}
+public func == (lhs: TokenType.Whitespace.WhitespaceItem, rhs: TokenType.Whitespace.WhitespaceItem) -> Bool {
     switch (lhs, rhs) {
     case (.null, .null):
         return true
