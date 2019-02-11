@@ -13,12 +13,12 @@ public enum LexerError: Error {
 
 public final class Lexer {
     private var source: String
-    private var tokens: Array<Token>
-    private var start = 0
+    var tokens: Array<Token>
+    var start = 0
     public var current = 0
-    private var line = 1
+    var line = 1
     
-    private var isAtEnd: Bool {
+    var isAtEnd: Bool {
         return current >= source.count
     }
     
@@ -54,10 +54,8 @@ public final class Lexer {
         case "\n":
             self.line += 1
             return Token(type: .whitespace(.lineBreak(.newline)), line: line - 1)
-        case "(": return Token(type: .punctuation(.leftParen), line: line)
-        case ")": return Token(type: .punctuation(.rightParen), line: line)
-        case "{": return Token(type: .punctuation(.leftCurlyBracket), line: line)
-        case "}": return Token(type: .punctuation(.rightCurlyBracket), line: line)
+        case "(", ")", "{", "}":
+            return punctuation(character: character, line: line)
         case ".":
             if peek() == "." {
                 while peek() == "." && !isAtEnd {
@@ -275,15 +273,15 @@ public final class Lexer {
         return c
     }
     
-    private func peek() -> UnicodeScalar {
+    func peek() -> UnicodeScalar {
         return peek(aheadBy: current)
     }
     
-    private func peekNext() -> UnicodeScalar {
+    func peekNext() -> UnicodeScalar {
         return peek(aheadBy: current + 1)
     }
     
-    private func peek(aheadBy i: Int) -> UnicodeScalar {
+    func peek(aheadBy i: Int) -> UnicodeScalar {
         if isAtEnd { return "\0" }
         return character(in: source, atIndexOffsetBy: i)
     }
@@ -329,77 +327,6 @@ public final class Lexer {
         return combinedSet.contains(c)
     }
     
-    public func isIdentifierHead(_ c: UnicodeScalar) -> Bool {
-        // https://github.com/nicklockwood/SwiftFormat/blob/1873197ca6b64b1d72585b69df433d40d600f3ce/Sources/Tokenizer.swift#L734
-        switch c.value {
-        case 0x41...0x5A, // A-Z
-        0x61 ... 0x7A, // a-z
-        0x5F, 0x24, // _ and $
-        0x00A8, 0x00AA, 0x00AD, 0x00AF,
-        0x00B2 ... 0x00B5,
-        0x00B7 ... 0x00BA,
-        0x00BC ... 0x00BE,
-        0x00C0 ... 0x00D6,
-        0x00D8 ... 0x00F6,
-        0x00F8 ... 0x00FF,
-        0x0100 ... 0x02FF,
-        0x0370 ... 0x167F,
-        0x1681 ... 0x180D,
-        0x180F ... 0x1DBF,
-        0x1E00 ... 0x1FFF,
-        0x200B ... 0x200D,
-        0x202A ... 0x202E,
-        0x203F ... 0x2040,
-        0x2054,
-        0x2060 ... 0x206F,
-        0x2070 ... 0x20CF,
-        0x2100 ... 0x218F,
-        0x2460 ... 0x24FF,
-        0x2776 ... 0x2793,
-        0x2C00 ... 0x2DFF,
-        0x2E80 ... 0x2FFF,
-        0x3004 ... 0x3007,
-        0x3021 ... 0x302F,
-        0x3031 ... 0x303F,
-        0x3040 ... 0xD7FF,
-        0xF900 ... 0xFD3D,
-        0xFD40 ... 0xFDCF,
-        0xFDF0 ... 0xFE1F,
-        0xFE30 ... 0xFE44,
-        0xFE47 ... 0xFFFD,
-        0x10000 ... 0x1FFFD,
-        0x20000 ... 0x2FFFD,
-        0x30000 ... 0x3FFFD,
-        0x40000 ... 0x4FFFD,
-        0x50000 ... 0x5FFFD,
-        0x60000 ... 0x6FFFD,
-        0x70000 ... 0x7FFFD,
-        0x80000 ... 0x8FFFD,
-        0x90000 ... 0x9FFFD,
-        0xA0000 ... 0xAFFFD,
-        0xB0000 ... 0xBFFFD,
-        0xC0000 ... 0xCFFFD,
-        0xD0000 ... 0xDFFFD,
-        0xE0000 ... 0xEFFFD:
-            return true
-        default:
-            return false
-        }
-    }
-    
-    func isIdentifierTail(_ c: UnicodeScalar) -> Bool {
-        switch c.value {
-        case 0x30 ... 0x39, // 0-9
-        0x0300 ... 0x036F,
-        0x1DC0 ... 0x1DFF,
-        0x20D0 ... 0x20FF,
-        0xFE20 ... 0xFE2F:
-            return true
-        default:
-            return isIdentifierHead(c)
-        }
-    }
-    
     public func isWhitespace(_ c: UnicodeScalar) -> Bool {
         let set = CharacterSet.whitespacesAndNewlines
         return set.contains(c)
@@ -409,148 +336,6 @@ public final class Lexer {
         var set = CharacterSet()
         set.insert(charactersIn: "!?")
         return set.contains(c)
-    }
-    
-    public func isDigit(_ c: UnicodeScalar) -> Bool {
-        let integerNumberCharacterSet = CharacterSet(charactersIn: Unicode.Scalar("0")...Unicode.Scalar("9"))
-        return integerNumberCharacterSet.contains(c)
-    }
-    
-    public func numericalLiteral() -> Token? {
-        while isDigit(peek()) { let _ = advance() }
-        
-        // Look for fractional part
-        if peek() == "." && isDigit(peekNext()) {
-            // Consume the decimal
-            let _ = advance()
-            
-            while isDigit(peek()) { let _ = advance() }
-            
-            let lexeme = substringInSource(from: start, to: current)
-            guard let floatingPointValue = Double(lexeme) else {
-                return nil
-            }
-            
-            return Token(type: .literal(.floatingPoint(floatingPointValue)), line: line)
-        } else {
-            let lexeme = substringInSource(from: start, to: current)
-            guard let integerValue = Int(lexeme) else {
-                return nil
-            }
-            
-            return Token(type: .literal(.integer(integerValue)), line: line)
-        }
-    }
-    
-    public func stringLiteral() -> Token {
-        var intermediateLiterals = [Literal]()
-        // Multi-line string literals
-        if peek() == "\"" && peekNext() == "\"" {
-            let _ = advance(by: 2)
-            var intermediateStart = current
-            
-            // Check for terminating delimiter
-            while peek() != "\"" && peekNext() != "\""  && peek(aheadBy: 3) != "\"" && !isAtEnd {
-                if peek() == "\n" { line += 1 }
-                let _ = advance()
-                
-                // Interpolated string encountered. Entire string literal is interpolated
-                if peek() == "\\"  && peekNext() == "(" {
-                    let initialSubstring = substringInSource(from: intermediateStart, to: current)
-                    let stringLiteral = Literal.string(initialSubstring)
-                    intermediateLiterals.append(stringLiteral)
-                    
-                    while (peek() != ")" && !isAtEnd) {
-                        let _ = advance()
-                    }
-                    
-                    intermediateStart = current - 1
-                    
-                    // Consume interpolation end parentheses
-                    let _ = advance()
-                    var interpolatedSubstring = substringInSource(from: intermediateStart, to: current-1)
-                    
-                    if interpolatedSubstring.first == "\"" {
-                        interpolatedSubstring.removeFirst()
-                    }
-                    
-                    if interpolatedSubstring.last == "\"" {
-                        interpolatedSubstring.removeLast()
-                    }
-                    
-                    let interpolatedLiteral = Literal.string(interpolatedSubstring)
-                    intermediateLiterals.append(interpolatedLiteral)
-                    
-                    intermediateStart = current
-                }
-            }
-            
-            // Consume the final character & ending quotations
-            let _ = advance(by: 4)
-            
-            let substring = substringInSource(from: intermediateStart, to: current - 3)
-            if intermediateLiterals.isEmpty {
-                return Token(type: .literal(.string(substring)), line: line)
-            } else {
-                intermediateLiterals.append(Literal.string(substring))
-                return Token(type: .literal(.interpolatedString(intermediateLiterals)), line: line)
-            }
-        } else {
-            var intermediateStart = start + 1
-            while peek() != "\"" && !isAtEnd {
-                if peek() == "\n" { line += 1 }
-                let _ = advance()
-                
-                if peek() == "\\"  && peekNext() == "(" {
-                    let initialSubstring = substringInSource(from: start + 1, to: current)
-                    let stringLiteral = Literal.string(initialSubstring)
-                    intermediateLiterals.append(stringLiteral)
-                    
-                    // Set start as the character past the opening delimiter of the interpolated string
-                    intermediateStart = current + 2
-                    
-                    while (peek() != ")" && !isAtEnd) {
-                        let _ = advance()
-                    }
-                    
-                    // Consume interpolation end parentheses
-                    let _ = advance()
-                    var interpolatedSubstring = substringInSource(from: intermediateStart, to: current-1)
-                    
-                    if interpolatedSubstring.first == "\"" {
-                        interpolatedSubstring.removeFirst()
-                    }
-                    
-                    if interpolatedSubstring.last == "\"" {
-                        interpolatedSubstring.removeLast()
-                    }
-                    
-                    let interpolatedLiteral = Literal.string(interpolatedSubstring)
-                    intermediateLiterals.append(interpolatedLiteral)
-                    
-                    intermediateStart = current
-                }
-            }
-            
-            
-            // Consume the closing double quote
-            let _ = advance()
-            let substring = substringInSource(from: intermediateStart, to: current - 1)
-            if intermediateLiterals.isEmpty {
-                return Token(type: .literal(.string(substring)), line: line)
-            } else {
-                intermediateLiterals.append(Literal.string(substring))
-                return Token(type: .literal(.interpolatedString(intermediateLiterals)), line: line)
-            }
-        }
-    }
-    
-    public func booleanLiteral(withLexeme lexeme: String) -> Token? {
-        switch lexeme {
-        case "true": return Token(type: .literal(.boolean(true)), line: line)
-        case "false": return Token(type: .literal(.boolean(false)), line: line)
-        default: return nil
-        }
     }
 }
 

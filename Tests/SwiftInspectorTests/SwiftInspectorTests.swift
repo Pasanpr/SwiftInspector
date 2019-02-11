@@ -11,10 +11,4 @@ final class SwiftInspectorTests: XCTestCase {
         
         XCTAssertTrue(inspector.contains(.variable, named: "foo"))
     }
-    
-    func testLetDeclaration() {
-        let source = "let foo = \"bar\""
-        inspector = try! SwiftInspector(source: source)
-//        XCTAssertTrue(inspector.contains(.constant, named: "foo"))
-    }
 }
