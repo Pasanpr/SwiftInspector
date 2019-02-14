@@ -8,7 +8,7 @@
 import Foundation
 
 public struct Program {
-    let statements: [Statement]
+    public let statements: [Statement]
 }
 
 extension Program: AutoEquatable {}
