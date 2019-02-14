@@ -460,6 +460,20 @@ public func == (lhs: Statement, rhs: Statement) -> Bool {
         return lhs == rhs
     case (.declaration(let lhs), .declaration(let rhs)):
         return lhs == rhs
+    case (.loopStatement, .loopStatement):
+        return true
+    case (.branchStatement, .branchStatement):
+        return true
+    case (.labeledStatement, .labeledStatement):
+        return true
+    case (.controlTransferStatement, .controlTransferStatement):
+        return true
+    case (.deferStatement, .deferStatement):
+        return true
+    case (.doStatementStatement, .doStatementStatement):
+        return true
+    case (.compilerControlStatement, .compilerControlStatement):
+        return true
     default: return false
     }
 }
@@ -523,6 +537,25 @@ public func == (lhs: TokenType.Whitespace.WhitespaceItem, rhs: TokenType.Whitesp
     case (.formFeed, .formFeed):
         return true
     case (.space, .space):
+        return true
+    default: return false
+    }
+}
+// MARK: - Type AutoEquatable
+extension Type: Equatable {}
+public func == (lhs: Type, rhs: Type) -> Bool {
+    switch (lhs, rhs) {
+    case (.array(let lhs), .array(let rhs)):
+        return lhs == rhs
+    case (.dictionary(let lhs), .dictionary(let rhs)):
+        if lhs.0 != rhs.0 { return false }
+        if lhs.1 != rhs.1 { return false }
+        return true
+    case (.function, .function):
+        return true
+    case (.typeIdentifier(let lhs), .typeIdentifier(let rhs)):
+        return lhs == rhs
+    case (.tuple, .tuple):
         return true
     default: return false
     }

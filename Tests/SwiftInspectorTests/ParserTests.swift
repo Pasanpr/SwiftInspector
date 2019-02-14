@@ -21,7 +21,22 @@ fileprivate extension Statement {
 
 fileprivate extension Program {
     static var implicitVariableDeclaration: Program {
-        let stmt = Statement.declaration(.variable(identifier: .identifier("foo", genericArgs: nil), type: nil, expression: .prefix(operator: nil, rhs: .primary(.literal("bar")))))
+        let stmt = Statement.declaration(.variable(identifier: "foo", type: nil, expression: .prefix(operator: nil, rhs: .primary(.literal("bar")))))
+        return Program(statements: [stmt])
+    }
+    
+    static var explicitVariableDeclaration: Program {
+        let stmt = Statement.declaration(.variable(identifier: "foo", type: Type.typeIdentifier(identifier: "String"), expression: .prefix(operator: nil, rhs: .primary(.literal("bar")))))
+        return Program(statements: [stmt])
+    }
+    
+    static var implicitConstantDeclaration: Program {
+        let stmt = Statement.declaration(.constant(identifier: "foo", type: nil, expression: .prefix(operator: nil, rhs: .primary(.literal("bar")))))
+        return Program(statements: [stmt])
+    }
+    
+    static var explicitConstantDeclaration: Program {
+        let stmt = Statement.declaration(.constant(identifier: "foo", type: Type.typeIdentifier(identifier: "String"), expression: .prefix(operator: nil, rhs: .primary(.literal("bar")))))
         return Program(statements: [stmt])
     }
 }
@@ -61,6 +76,63 @@ class ParserTests: XCTestCase {
     }
     
     func testExplicitVariableDeclaration() {
+        // var foo: String = "bar"
         
+        let tokens = [
+            Token(type: .keyword(.declaration(.var)), line: 1),
+            Token(type: .identifier("foo"), line: 1),
+            Token(type: .punctuation(.colon), line: 1),
+            Token(type: .identifier("String"), line: 1),
+            Token(type: .operator(.assignment), line: 1),
+            Token(type: .literal(.string("bar")), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let parser = Parser(tokens: tokens)
+        let program = try! parser.parse()
+        
+        print(program.statements)
+        
+        XCTAssertTrue(program == Program.explicitVariableDeclaration)
+    }
+    
+    func testImplicitConstantDeclaration() {
+        // let foo = "bar"
+        
+        let tokens = [
+            Token(type: .keyword(.declaration(.let)), line: 1),
+            Token(type: .identifier("foo"), line: 1),
+            Token(type: .operator(.assignment), line: 1),
+            Token(type: .literal(.string("bar")), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let parser = Parser(tokens: tokens)
+        let program = try! parser.parse()
+        
+        print(program.statements)
+        
+        XCTAssertTrue(program == Program.implicitConstantDeclaration)
+    }
+    
+    func testExplicitConstantDeclaration() {
+        // let foo: String = "bar"
+        
+        let tokens = [
+            Token(type: .keyword(.declaration(.let)), line: 1),
+            Token(type: .identifier("foo"), line: 1),
+            Token(type: .punctuation(.colon), line: 1),
+            Token(type: .identifier("String"), line: 1),
+            Token(type: .operator(.assignment), line: 1),
+            Token(type: .literal(.string("bar")), line: 1),
+            Token(type: .eof, line: 1)
+        ]
+        
+        let parser = Parser(tokens: tokens)
+        let program = try! parser.parse()
+        
+        print(program.statements)
+        
+        XCTAssertTrue(program == Program.explicitConstantDeclaration)
     }
 }

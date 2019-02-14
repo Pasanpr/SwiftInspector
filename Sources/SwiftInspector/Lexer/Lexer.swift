@@ -326,6 +326,7 @@ public final class Lexer {
         let combinedSet = letters.union(underscoreSet)
         return combinedSet.contains(c)
     }
+
     
     public func isWhitespace(_ c: UnicodeScalar) -> Bool {
         let set = CharacterSet.whitespacesAndNewlines

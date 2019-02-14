@@ -8,8 +8,8 @@
 import Foundation
 
 public enum Declaration {
-    case variable(identifier: PrimaryExpression, type: String?, expression: Expression)
-    case constant(identifier: PrimaryExpression, type: String?, expression: Expression)
+    case variable(identifier: String, type: Type?, expression: Expression)
+    case constant(identifier: String, type: Type?, expression: Expression)
 }
 
 extension Declaration: AutoEquatable {}

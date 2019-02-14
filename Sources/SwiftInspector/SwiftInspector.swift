@@ -13,30 +13,31 @@ public class SwiftInspector {
         case constant
     }
     
-    public func contains(_ declaration: Declaration, named name: String) -> Bool {
-        for statement in program.statements {
-            switch statement {
-            case .expression:
-                return false
-            case .declaration(let declr):
-                switch declr {
-                case .variable(let identifierExpr, _, let expr):
-                    switch identifierExpr {
-                    case .identifier(let varName, let genericArgs):
-                        if varName == name {
-                            return true
-                        } else {
-                            return false
-                        }
-                    default:
-                        return false
-                    }
-                default:
-                    return false
-                }
-            }
-        }
-        
-        return false
-    }
+//    public func contains(_ declaration: Declaration, named name: String) -> Bool {
+//        for statement in program.statements {
+//            switch statement {
+//            case .expression:
+//                return false
+//            case .declaration(let declr):
+//                switch declr {
+//                case .variable(let identifierExpr, _, let expr):
+//                    switch identifierExpr {
+//                    case .identifier(let varName, let genericArgs):
+//                        if varName == name {
+//                            return true
+//                        } else {
+//                            return false
+//                        }
+//                    default:
+//                        return false
+//                    }
+//                default:
+//                    return false
+//                }
+//            default: return false
+//            }
+//        }
+//        
+//        return false
+//    }
 }

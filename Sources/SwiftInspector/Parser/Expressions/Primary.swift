@@ -56,3 +56,13 @@ public enum PrimaryExpression {
 }
 
 extension PrimaryExpression: AutoEquatable {}
+
+extension PrimaryExpression: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .literal(let name): return name
+        case .identifier(let name, let genericArgs): return name
+        default: fatalError()
+        }
+    }
+}

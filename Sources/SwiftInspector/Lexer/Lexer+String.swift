@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Lexer {
+public extension Lexer {
     func stringLiteral() -> Token {
         var intermediateLiterals = [Literal]()
         // Multi-line string literals

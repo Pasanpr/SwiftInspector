@@ -7,9 +7,16 @@
 
 import Foundation
 
-public enum Statement {
+indirect public enum Statement {
     case expression(Expression)
     case declaration(Declaration)
+    case loopStatement
+    case branchStatement
+    case labeledStatement
+    case controlTransferStatement
+    case deferStatement
+    case doStatementStatement
+    case compilerControlStatement
 }
 
 extension Statement: AutoEquatable {}
