@@ -14,7 +14,7 @@ public indirect enum Type {
     case typeIdentifier(identifier: String)
     case tuple
     
-    func matchesType<T>(_ type: T.Type) -> Bool {
+    public func matchesType<T>(_ type: T.Type) -> Bool {
         let typeDescription = String(describing: type)
         return self.description == typeDescription
     }
